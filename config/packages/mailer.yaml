@@ -1,3 +1,17 @@
 framework:
     mailer:
         dsn: '%env(MAILER_DSN)%'
+        headers:
+            X-Debug: true
+monolog:
+    handlers:
+        main:
+            type: stream
+            path: "%kernel.logs_dir%/dev.log"
+            level: debug
+            channels: ["!event"]
+        mailer:
+            type: stream
+            path: "%kernel.logs_dir%/mailer.log"
+            level: debug
+            channels: ["mailer"]
