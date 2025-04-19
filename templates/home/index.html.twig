@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Stubborn{% endblock %}
+
+{% block body %}
+    <h1>Stubborn</h1>
+
+    {# Informations de la société #}
+    <section>
+        <h2>À propos de Stubborn</h2>
+        <p><strong>Nom :</strong> Stubborn</p>
+        <p><strong>Adresse :</strong> Piccadilly Circus, London W1J 0DA, Royaume-Uni</p>
+        <p><strong>Contact :</strong> stubborn@blabla.com</p>
+        <p><strong>Slogan :</strong> Don't compromise on your look</p>
+    </section>
+
+    {# Menu dynamique #}
+    <nav>
+        <ul>
+            <li><a href="{{ path('app_home') }}">Accueil</a></li>
+            {% if app.user %}
+                <li><a href="{{ path('app_products') }}">Boutique</a></li>
+                <li><a href="{{ path('app_cart') }}">Panier</a></li>
+                <li><a href="{{ path('app_logout') }}">Se déconnecter</a></li>
+            {% else %}
+                <li><a href="{{ path('app_register') }}">S'inscrire</a></li>
+                <li><a href="{{ path('app_login') }}">Se connecter</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    {# Sweat-shirts mis en avant #}
+    <section>
+        <h2>Sweat-shirts mis en avant</h2>
+        {% for sweatshirt in featuredSweatshirts %}
+            <div>
+                <h3>{{ sweatshirt.name }}</h3>
+                <p>Prix : {{ sweatshirt.price }} €</p>
+                <img src="{{ asset('images/' ~ sweatshirt.image) }}" alt="{{ sweatshirt.name }}" width="200">
+                {% if app.user %}
+                    <a href="{{ path('app_product', {'id': sweatshirt.id}) }}">Voir</a>
+                {% endif %}
+            </div>
+        {% else %}
+            <p>Aucun sweat-shirt mis en avant.</p>
+        {% endfor %}
+    </section>
+{% endblock %}
