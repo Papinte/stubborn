@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -19,8 +20,11 @@ class TestMailController extends AbstractController
             ->subject('Test Email from Stubborn')
             ->text('Ceci est un test !');
 
-        $mailer->send($email);
-
-        return new Response('E-mail envoyé ! Vérifiez Mailtrap.');
+        try {
+            $mailer->send($email);
+            return new Response('E-mail envoyé ! Vérifiez Mailhog sur http://localhost:8025.');
+        } catch (TransportExceptionInterface $e) {
+            return new Response('Erreur lors de l\'envoi : ' . $e->getMessage());
+        }
     }
 }

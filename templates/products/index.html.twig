@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Produits - Stubborn{% endblock %}
+
+{% block body %}
+    <h1>Produits</h1>
+
+    <a href="{{ path('app_home') }}">Retour à l'accueil</a>
+
+    <section>
+        <h2>Nos sweat-shirts</h2>
+        {% for sweatshirt in sweatshirts %}
+            <div>
+                <h3>{{ sweatshirt.name }}</h3>
+                <p>Prix : {{ sweatshirt.price }} €</p>
+                <img src="{{ asset('images/' ~ sweatshirt.image) }}" alt="{{ sweatshirt.name }}" width="200">
+                <a href="{{ path('app_product', {'id': sweatshirt.id}) }}">Voir</a>
+            </div>
+        {% else %}
+            <p>Aucun sweat-shirt disponible.</p>
+        {% endfor %}
+    </section>
+{% endblock %}
