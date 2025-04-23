@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ sweatshirt.name }} - Stubborn{% endblock %}
+
+{% block body %}
+    <h1>{{ sweatshirt.name }}</h1>
+
+    <p>Prix : {{ sweatshirt.price }} €</p>
+    <img src="{{ asset('images/' ~ sweatshirt.image) }}" alt="{{ sweatshirt.name }}" width="200">
+
+    {% for flash_message in app.flashes('success') %}
+        <div class="alert alert-success">{{ flash_message }}</div>
+    {% endfor %}
+
+    {{ form_start(form) }}
+        {{ form_row(form.size) }}
+        {{ form_row(form.submit) }}
+    {{ form_end(form) }}
+{% endblock %}

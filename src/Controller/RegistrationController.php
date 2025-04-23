@@ -59,7 +59,7 @@ class RegistrationController extends AbstractController
     #[Route('/verify/email', name: 'app_verify_email')]
     public function verifyUserEmail(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $id = $request->query->get('id'); // Récupérer l'ID de l'utilisateur depuis l'URL
+        $id = $request->query->get('id');
     
         if (null === $id) {
             $this->addFlash('verify_email_error', 'ID utilisateur manquant dans l\'URL.');
@@ -73,26 +73,10 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_register');
         }
     
-        // Vérifier si l'e-mail correspond
-        $emailFromUrl = $request->query->get('email');
-        if ($emailFromUrl !== $user->getEmail()) {
-            $this->addFlash('verify_email_error', 'L\'e-mail dans l\'URL (' . $emailFromUrl . ') ne correspond pas à l\'e-mail de l\'utilisateur (' . $user->getEmail() . ').');
-            return $this->redirectToRoute('app_register');
-        }
-    
-        // Vérifier les paramètres du lien
-        $signature = $request->query->get('signature');
-        $expires = $request->query->get('expires');
-        if (!$signature || !$expires) {
-            $this->addFlash('verify_email_error', 'Paramètres de signature ou d\'expiration manquants dans l\'URL.');
-            return $this->redirectToRoute('app_register');
-        }
-    
-        // Valider le lien de confirmation et mettre isVerified à true
         try {
             $this->emailVerifier->handleEmailConfirmation($request, $user);
         } catch (VerifyEmailExceptionInterface $exception) {
-            $this->addFlash('verify_email_error', 'Erreur lors de la vérification : ' . $exception->getReason() . ' | Détails : ' . $exception->getMessage());
+            $this->addFlash('verify_email_error', 'Erreur lors de la vérification : ' . $exception->getReason());
             return $this->redirectToRoute('app_register');
         } catch (\Exception $e) {
             $this->addFlash('verify_email_error', 'Erreur inattendue : ' . $e->getMessage());
@@ -101,7 +85,6 @@ class RegistrationController extends AbstractController
     
         $this->addFlash('success', 'Votre adresse e-mail a été vérifiée.');
     
-        // Connecter automatiquement l'utilisateur après vérification
         $this->security->login($user, 'form_login', 'main');
     
         return $this->redirectToRoute('app_home');
