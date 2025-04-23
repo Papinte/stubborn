@@ -7,6 +7,13 @@
 
     <a href="{{ path('app_home') }}">Retour à l'accueil</a>
 
+    {# Formulaire de filtrage #}
+    {{ form_start(form) }}
+        {{ form_row(form.minPrice) }}
+        {{ form_row(form.maxPrice) }}
+        {{ form_row(form.filter) }}
+    {{ form_end(form) }}
+
     <section>
         <h2>Nos sweat-shirts</h2>
         {% for sweatshirt in sweatshirts %}

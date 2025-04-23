@@ -5,7 +5,40 @@
 {% block body %}
     <h1>Panier</h1>
 
-    <p>Votre panier est vide pour l'instant.</p>
+    {% for flash_message in app.flashes('success') %}
+        <div class="alert alert-success">{{ flash_message }}</div>
+    {% endfor %}
+
+    {% if cart is empty %}
+        <p>Votre panier est vide pour l'instant.</p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Sweat-shirt</th>
+                    <th>Taille</th>
+                    <th>Prix</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for index, item in cart %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.size }}</td>
+                        <td>{{ item.price }} €</td>
+                        <td>
+                            <a href="{{ path('app_cart_remove', {'index': index}) }}">Retirer</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p><strong>Prix total :</strong> {{ totalPrice }} €</p>
+
+        <a href="#">Valider et régler la commande</a> {# À implémenter plus tard #}
+    {% endif %}
 
     <a href="{{ path('app_products') }}">Continuer mes achats</a>
 {% endblock %}
