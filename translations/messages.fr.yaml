@@ -1,0 +1,8 @@
+# translations/messages.fr.yaml
+form.name: Nom
+form.email: Email
+form.password: Mot de passe
+form.delivery_address: Adresse de livraison
+form.agree_terms: J'accepte les conditions d'utilisation
+form.submit: S'inscrire
+already_registered: Déjà inscrit ?

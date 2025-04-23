@@ -6,13 +6,13 @@
     <h1>Inscription</h1>
 
     {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.name) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {'label': 'Mot de passe'}) }}
-        {{ form_row(registrationForm.delivery_address) }}
-        {{ form_row(registrationForm.agreeTerms) }}
-        <button type="submit">S'inscrire</button>
+        {{ form_row(registrationForm.name, {'label': 'form.name'}) }}
+        {{ form_row(registrationForm.email, {'label': 'form.email'}) }}
+        {{ form_row(registrationForm.plainPassword, {'label': 'form.password'}) }}
+        {{ form_row(registrationForm.delivery_address, {'label': 'form.delivery_address'}) }}
+        {{ form_row(registrationForm.agreeTerms, {'label': 'form.agree_terms'}) }}
+        <button type="submit">{{ 'form.submit'|trans }}</button>
     {{ form_end(registrationForm) }}
 
-    <p><a href="{{ path('app_login') }}">Déjà inscrit ?</a></p>
+    <p><a href="{{ path('app_login') }}">{{ 'already_registered'|trans }}</a></p>
 {% endblock %}

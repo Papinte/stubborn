@@ -13,40 +13,26 @@ class ProductsController extends AbstractController
     #[Route('/products', name: 'app_products')]
     public function index(Request $request, SweatshirtRepository $sweatshirtRepository): Response
     {
-        // Créer un formulaire de filtrage par prix
-        $form = $this->createFormBuilder()
-            ->add('minPrice', \Symfony\Component\Form\Extension\Core\Type\NumberType::class, [
-                'label' => 'Prix minimum',
-                'required' => false,
-                'attr' => ['placeholder' => 'Prix minimum'],
-            ])
-            ->add('maxPrice', \Symfony\Component\Form\Extension\Core\Type\NumberType::class, [
-                'label' => 'Prix maximum',
-                'required' => false,
-                'attr' => ['placeholder' => 'Prix maximum'],
-            ])
-            ->add('filter', \Symfony\Component\Form\Extension\Core\Type\SubmitType::class, [
-                'label' => 'Filtrer',
-            ])
-            ->getForm();
+        // Récupérer la fourchette de prix depuis les paramètres de requête
+        $range = $request->query->get('range');
 
-        $form->handleRequest($request);
+        // Définir les fourchettes de prix
+        $priceRanges = [
+            '1-10' => [1, 10],
+            '11-20' => [11, 20],
+            '21-30' => [21, 30],
+            '31-40' => [31, 40],
+            '41-50' => [41, 50],
+        ];
 
-        // Récupérer les paramètres de filtrage
-        $minPrice = $form->isSubmitted() && $form->isValid() ? $form->get('minPrice')->getData() : null;
-        $maxPrice = $form->isSubmitted() && $form->isValid() ? $form->get('maxPrice')->getData() : null;
-
-        // Construire les critères de filtrage
-        $criteria = [];
-        if ($minPrice !== null) {
-            $criteria[] = ['price' => ['>=', $minPrice]];
-        }
-        if ($maxPrice !== null) {
-            $criteria[] = ['price' => ['<=', $maxPrice]];
-        }
-
-        // Récupérer les sweat-shirts avec les filtres
-        if (!empty($criteria)) {
+        // Filtrer les sweat-shirts selon la fourchette sélectionnée
+        if ($range && isset($priceRanges[$range])) {
+            $minPrice = $priceRanges[$range][0];
+            $maxPrice = $priceRanges[$range][1];
+            $criteria = [
+                ['price' => ['>=', $minPrice]],
+                ['price' => ['<=', $maxPrice]],
+            ];
             $sweatshirts = $sweatshirtRepository->findByCriteria($criteria);
         } else {
             $sweatshirts = $sweatshirtRepository->findAll();
@@ -54,7 +40,8 @@ class ProductsController extends AbstractController
 
         return $this->render('products/index.html.twig', [
             'sweatshirts' => $sweatshirts,
-            'form' => $form->createView(),
+            'selectedRange' => $range,
+            'priceRanges' => array_keys($priceRanges),
         ]);
     }
 }

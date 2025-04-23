@@ -7,12 +7,14 @@
 
     <a href="{{ path('app_home') }}">Retour à l'accueil</a>
 
-    {# Formulaire de filtrage #}
-    {{ form_start(form) }}
-        {{ form_row(form.minPrice) }}
-        {{ form_row(form.maxPrice) }}
-        {{ form_row(form.filter) }}
-    {{ form_end(form) }}
+    {# Boutons de filtrage par fourchette de prix #}
+    <div>
+        <h3>Filtrer par prix :</h3>
+        <a href="{{ path('app_products') }}" {% if selectedRange is null %}style="font-weight: bold;"{% endif %}>Tous</a>
+        {% for range in priceRanges %}
+            <a href="{{ path('app_products', {'range': range}) }}" {% if selectedRange == range %}style="font-weight: bold;"{% endif %}>{{ range }} €</a>
+        {% endfor %}
+    </div>
 
     <section>
         <h2>Nos sweat-shirts</h2>
