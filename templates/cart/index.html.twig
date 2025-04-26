@@ -9,6 +9,10 @@
         <div class="alert alert-success">{{ flash_message }}</div>
     {% endfor %}
 
+    {% for flash_message in app.flashes('error') %}
+        <div class="alert alert-danger">{{ flash_message }}</div>
+    {% endfor %}
+
     {% if cart is empty %}
         <p>Votre panier est vide pour l'instant.</p>
     {% else %}
@@ -37,7 +41,7 @@
 
         <p><strong>Prix total :</strong> {{ totalPrice }} €</p>
 
-        <a href="#">Valider et régler la commande</a> {# À implémenter plus tard #}
+        <a href="{{ path('app_cart_checkout') }}">Finaliser ma commande</a>
     {% endif %}
 
     <a href="{{ path('app_products') }}">Continuer mes achats</a>

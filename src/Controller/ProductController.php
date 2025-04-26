@@ -36,15 +36,31 @@ public function show(Request $request, Sweatshirt $sweatshirt): Response
         $data = $form->getData();
         $size = $data['size'];
 
+        // Vérifier le stock pour la taille sélectionnée
+        $stocks = $sweatshirt->getStock();
+        if (!isset($stocks[$size]) || !is_numeric($stocks[$size])) {
+            throw new \LogicException('Stock invalide pour la taille ' . $size);
+        }
+        if ($stocks[$size] <= 0) {
+            $this->addFlash('error', 'Désolé, ce sweat-shirt est en rupture de stock pour la taille ' . $size);
+            return $this->redirectToRoute('app_product', ['id' => $sweatshirt->getId()]);
+        }
+
+        // Récupérer le prix (qui est maintenant un float)
+        $price = $sweatshirt->getPrice();
+        if (!is_numeric($price)) {
+            throw new \LogicException('Prix invalide pour l\'article ID ' . $sweatshirt->getId());
+        }
+
         // Récupérer le panier depuis la session
         $cart = $request->getSession()->get('cart', []);
 
-        // Ajouter l'article au panier (id, taille, prix, nom)
+        // Ajouter l'article au panier
         $cart[] = [
             'id' => $sweatshirt->getId(),
             'name' => $sweatshirt->getName(),
             'size' => $size,
-            'price' => $sweatshirt->getPrice(),
+            'price' => (float) $price, // Le prix est un float
         ];
 
         // Sauvegarder le panier dans la session

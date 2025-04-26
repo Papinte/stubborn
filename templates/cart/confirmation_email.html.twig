@@ -1,0 +1,17 @@
+<h1>Confirmation de votre commande</h1>
+
+<p>Bonjour {{ user.name }},</p>
+
+<p>Merci pour votre commande chez Stubborn ! Voici les détails de votre commande :</p>
+
+<ul>
+    {% for item in cart %}
+        <li>{{ item.name }} (Taille : {{ item.size }}) - {{ item.price }} €</li>
+    {% endfor %}
+</ul>
+
+<p><strong>Prix total :</strong> {{ totalPrice }} €</p>
+
+<p>Nous vous remercions pour votre confiance !</p>
+
+<p>L'équipe Stubborn</p>

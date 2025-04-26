@@ -18,11 +18,9 @@ class ProductsController extends AbstractController
 
         // Définir les fourchettes de prix
         $priceRanges = [
-            '1-10' => [1, 10],
-            '11-20' => [11, 20],
-            '21-30' => [21, 30],
-            '31-40' => [31, 40],
-            '41-50' => [41, 50],
+            '10-29' => [10, 29],
+            '29-35' => [29, 35],
+            '35-50' => [35, 50],
         ];
 
         // Filtrer les sweat-shirts selon la fourchette sélectionnée
