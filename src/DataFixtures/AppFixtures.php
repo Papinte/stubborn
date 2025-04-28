@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Sweatshirt;
+use App\Entity\Stock;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -27,12 +28,20 @@ class AppFixtures extends Fixture
             $sweatshirt = new Sweatshirt();
             $sweatshirt->setName($data['name']);
             $sweatshirt->setPrice($data['price']);
-            $sweatshirt->setStock($data['stock']);
             $sweatshirt->setIsFeatured($data['isFeatured']);
             $sweatshirt->setImage($data['image']);
+
+            // Ajouter les stocks pour chaque taille
+            foreach ($data['stock'] as $size => $quantity) {
+                $stock = new Stock();
+                $stock->setSize($size);
+                $stock->setQuantity($quantity);
+                $sweatshirt->addStock($stock);
+            }
+
             $manager->persist($sweatshirt);
         }
-    
+
         $manager->flush();
     }
 }

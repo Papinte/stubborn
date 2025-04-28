@@ -5,18 +5,17 @@
 {% block body %}
     <h1>Panier</h1>
 
-    {% for flash_message in app.flashes('success') %}
-        <div class="alert alert-success">{{ flash_message }}</div>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
     {% endfor %}
-
-    {% for flash_message in app.flashes('error') %}
-        <div class="alert alert-danger">{{ flash_message }}</div>
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">{{ message }}</div>
     {% endfor %}
 
     {% if cart is empty %}
         <p>Votre panier est vide pour l'instant.</p>
     {% else %}
-        <table>
+        <table class="table">
             <thead>
                 <tr>
                     <th>Sweat-shirt</th>
@@ -32,17 +31,17 @@
                         <td>{{ item.size }}</td>
                         <td>{{ item.price }} €</td>
                         <td>
-                            <a href="{{ path('app_cart_remove', {'index': index}) }}">Retirer</a>
+                            <a href="{{ path('app_cart_remove', {'index': index}) }}" class="btn btn-danger btn-sm">Retirer</a>
                         </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
 
-        <p><strong>Prix total :</strong> {{ totalPrice }} €</p>
+        <p><strong>Prix total : {{ totalPrice }} €</strong></p>
 
-        <a href="{{ path('app_cart_checkout') }}">Finaliser ma commande</a>
+        <a href="{{ path('app_cart_payment') }}" class="btn btn-primary" data-turbo="false">Finaliser ma commande</a>
     {% endif %}
 
-    <a href="{{ path('app_products') }}">Continuer mes achats</a>
+    <p><a href="{{ path('app_products') }}">Continuer mes achats</a></p>
 {% endblock %}

@@ -22,9 +22,6 @@ class Sweatshirt
     private ?float $price = null;
 
     #[ORM\Column]
-    private array $stock = [];
-
-    #[ORM\Column]
     private ?bool $isFeatured = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -33,7 +30,7 @@ class Sweatshirt
     /**
      * @var Collection<int, Stock>
      */
-    #[ORM\OneToMany(targetEntity: Stock::class, mappedBy: 'sweatshirt')]
+    #[ORM\OneToMany(targetEntity: Stock::class, mappedBy: 'sweatshirt', cascade: ['persist', 'remove'])]
     private Collection $stocks;
 
     public function __construct()
@@ -66,18 +63,6 @@ class Sweatshirt
     public function setPrice(float $price): static
     {
         $this->price = $price;
-
-        return $this;
-    }
-
-    public function getStock(): array
-    {
-        return $this->stock;
-    }
-
-    public function setStock(array $stock): static
-    {
-        $this->stock = $stock;
 
         return $this;
     }
