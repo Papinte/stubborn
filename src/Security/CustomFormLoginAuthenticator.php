@@ -41,22 +41,16 @@ class CustomFormLoginAuthenticator extends AbstractLoginFormAuthenticator
         $password = $request->request->get('_password', '');
         $csrfToken = $request->request->get('_csrf_token', '');
 
-        error_log('CustomFormLoginAuthenticator: Authenticating user ' . $email);
-
         return new Passport(
             new UserBadge($email, function ($userIdentifier) {
                 // Charger l'utilisateur via le repository
                 $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $userIdentifier]);
                 if (!$user instanceof User) {
-                    error_log('CustomFormLoginAuthenticator: User not found for email ' . $userIdentifier);
                     throw new AuthenticationException('Utilisateur non trouvé.');
                 }
 
-                error_log('CustomFormLoginAuthenticator: Loaded user ' . $userIdentifier . ', isVerified=' . ($user->isVerified() ? 'true' : 'false'));
-
                 // Vérifier si l'utilisateur est vérifié
                 if (!$user->isVerified()) {
-                    error_log('CustomFormLoginAuthenticator: User not verified, throwing exception');
                     throw new AuthenticationException('Votre compte n’est pas encore vérifié. Veuillez vérifier votre adresse e-mail pour activer votre compte.');
                 }
 
@@ -72,20 +66,15 @@ class CustomFormLoginAuthenticator extends AbstractLoginFormAuthenticator
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         $user = $token->getUser();
-        error_log('CustomFormLoginAuthenticator: User class=' . (is_object($user) ? get_class($user) : 'null'));
 
         if (!$user instanceof User) {
-            error_log('CustomFormLoginAuthenticator: User is not an instance of App\Entity\User');
             throw new AuthenticationException('Utilisateur invalide.');
         }
 
-        error_log('CustomFormLoginAuthenticator: User verified, redirecting to app_home');
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
-            error_log('CustomFormLoginAuthenticator: Redirecting to target path: ' . $targetPath);
             return new RedirectResponse($targetPath);
         }
 
-        error_log('CustomFormLoginAuthenticator: Redirecting to app_home');
         return new RedirectResponse($this->urlGenerator->generate('app_home'));
     }
 }
