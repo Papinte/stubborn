@@ -32,11 +32,20 @@ class AdminController extends AbstractController
 
         // Créer un formulaire pour chaque sweat-shirt
         $forms = [];
-        foreach ($sweatshirts as $sweatshirt) {
-            $form = $this->createForm(SweatshirtInlineType::class, $sweatshirt);
-            $form->handleRequest($request);
+        $submittedSweatshirtId = $request->request->get('sweatshirt_id');
+        $this->logger->info('Sweatshirt ID soumis: ' . ($submittedSweatshirtId ?: 'aucun'));
 
-            if ($form->isSubmitted()) {
+        foreach ($sweatshirts as $sweatshirt) {
+            $form = $this->createForm(SweatshirtInlineType::class, $sweatshirt, [
+                'csrf_field_name' => '_token',
+                'csrf_token_id' => 'sweatshirt_inline_' . $sweatshirt->getId(),
+            ]);
+            if ($submittedSweatshirtId == $sweatshirt->getId()) {
+                $this->logger->info('Traitement du formulaire pour le sweat-shirt ID: ' . $sweatshirt->getId());
+                $form->handleRequest($request);
+            }
+
+            if ($submittedSweatshirtId == $sweatshirt->getId() && $form->isSubmitted()) {
                 $this->logger->info('Formulaire soumis pour le sweat-shirt ID: ' . $sweatshirt->getId());
                 $this->logger->info('Données soumises: ' . json_encode($request->request->all()));
 
@@ -53,17 +62,25 @@ class AdminController extends AbstractController
                         $sweatshirt->setImage($newFilename);
                     }
 
+                    // Mettre à jour les champs name et price
+                    $formData = $request->request->all();
+                    $submittedData = $formData['sweatshirt_inline'] ?? [];
+                    if (!empty($submittedData['name'])) {
+                        $sweatshirt->setName($submittedData['name']);
+                    }
+                    if (!empty($submittedData['price']) && is_numeric($submittedData['price'])) {
+                        $sweatshirt->setPrice((float)str_replace(',', '.', $submittedData['price']));
+                    }
+
                     // Mettre à jour les stocks
-                    $formData = $request->request->get('sweatshirt_inline');
-                    $this->logger->info('Données des stocks: ' . json_encode($formData['stocks'] ?? []));
-                    if (isset($formData['stocks'])) {
-                        $stocksData = $formData['stocks'];
-                        foreach ($sweatshirt->getStocks() as $stock) {
-                            $size = $stock->getSize();
-                            if (isset($stocksData[$size]) && is_numeric($stocksData[$size])) {
-                                $stock->setQuantity((int)$stocksData[$size]);
-                                $this->logger->info("Stock mis à jour pour la taille $size: " . $stocksData[$size]);
-                            }
+                    $stocksData = $submittedData['stocks'] ?? [];
+                    $this->logger->info('Données des stocks: ' . json_encode($stocksData));
+                    foreach ($sweatshirt->getStocks() as $stock) {
+                        $size = $stock->getSize();
+                        if (isset($stocksData[$size]) && is_numeric($stocksData[$size]) && (int)$stocksData[$size] >= 0) {
+                            $stock->setQuantity((int)$stocksData[$size]);
+                            $entityManager->persist($stock);
+                            $this->logger->info("Stock mis à jour pour la taille $size: " . $stocksData[$size]);
                         }
                     }
 
@@ -73,15 +90,17 @@ class AdminController extends AbstractController
                         'id' => $sweatshirt->getId(),
                         'name' => $sweatshirt->getName(),
                         'price' => $sweatshirt->getPrice(),
-                        'isFeatured' => $sweatshirt->getIsFeatured(),
+                        'isFeatured' => $sweatshirt->isFeatured(),
                         'image' => $sweatshirt->getImage(),
+                        'stocks' => array_map(fn($s) => [$s->getSize() => $s->getQuantity()], $sweatshirt->getStocks()->toArray()),
                     ]));
 
                     $this->addFlash('success', 'Sweat-shirt modifié avec succès !');
                     return $this->redirectToRoute('app_admin');
                 } else {
-                    $this->logger->error('Formulaire invalide: ' . json_encode($form->getErrors(true)));
-                    $this->addFlash('error', 'Erreur lors de la modification du sweat-shirt.');
+                    $this->logger->error('Formulaire invalide pour le sweat-shirt ID: ' . $sweatshirt->getId());
+                    $this->logger->error('Erreurs: ' . $form->getErrors(true, true)->__toString());
+                    $this->addFlash('error', 'Erreur lors de la modification du sweat-shirt ID ' . $sweatshirt->getId() . ': ' . $form->getErrors(true, true)->__toString());
                 }
             }
 
@@ -113,7 +132,7 @@ class AdminController extends AbstractController
                 foreach ($sizes as $size) {
                     $stock = new Stock();
                     $stock->setSize($size);
-                    $stock->setQuantity(2); // Stock initial par défaut
+                    $stock->setQuantity(2);
                     $newSweatshirt->addStock($stock);
                 }
 
@@ -123,8 +142,8 @@ class AdminController extends AbstractController
                 $this->addFlash('success', 'Sweat-shirt ajouté avec succès !');
                 return $this->redirectToRoute('app_admin');
             } else {
-                $this->logger->error('Formulaire d’ajout invalide: ' . json_encode($newForm->getErrors(true)));
-                $this->addFlash('error', 'Erreur lors de l’ajout du sweat-shirt.');
+                $this->logger->error('Formulaire d’ajout invalide: ' . $newForm->getErrors(true, true)->__toString());
+                $this->addFlash('error', 'Erreur lors de l’ajout du sweat-shirt: ' . $newForm->getErrors(true, true)->__toString());
             }
         }
 
@@ -143,6 +162,8 @@ class AdminController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Sweat-shirt supprimé avec succès !');
+        } else {
+            $this->addFlash('error', 'Erreur lors de la suppression: jeton CSRF invalide.');
         }
 
         return $this->redirectToRoute('app_admin');

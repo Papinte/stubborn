@@ -29,6 +29,7 @@
                 <tr>
                     <td>
                         {{ form_start(forms[sweatshirt.id], {'attr': {'data-turbo': 'false'}}) }}
+                        <input type="hidden" name="sweatshirt_id" value="{{ sweatshirt.id }}">
                         {{ form_widget(forms[sweatshirt.id].name) }}
                     </td>
                     <td>
@@ -39,7 +40,7 @@
                     </td>
                     <td>
                         {% if sweatshirt.image %}
-                            <img src="{{ asset('images/' ~ sweatshirt.image) }}" alt="{{ sweatshirt.name }}" style="max-width: 100px;">
+                            <img src="{{ asset('images/' ~ sweatshirt.image) }}" alt="{{ sweatshirt.name }}" style="max-width: 100px;" onerror="this.style.display='none'">
                         {% endif %}
                         {{ form_widget(forms[sweatshirt.id].image) }}
                     </td>

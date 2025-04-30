@@ -21,10 +21,12 @@ class SweatshirtInlineType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => false,
                 'attr' => ['class' => 'form-control'],
+                'required' => false,
             ])
             ->add('price', NumberType::class, [
                 'label' => false,
                 'attr' => ['class' => 'form-control'],
+                'required' => false,
             ])
             ->add('isFeatured', CheckboxType::class, [
                 'label' => 'Mettre en avant',
@@ -43,21 +45,25 @@ class SweatshirtInlineType extends AbstractType
                             'image/png',
                         ],
                         'mimeTypesMessage' => 'Veuillez uploader une image JPEG ou PNG',
-                    ]),
+                        'maxSizeMessage' => 'Le fichier est trop gros (taille maximale : 1024k).',
+                    ], null, null, true),
                 ],
                 'attr' => ['class' => 'form-control-file'],
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Modifier',
                 'attr' => ['class' => 'btn btn-primary btn-sm'],
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Sweatshirt::class,
+            'csrf_protection' => true,
+            'csrf_field_name' => '_token',
+            'csrf_token_id' => 'sweatshirt_inline',
+            'allow_extra_fields' => true, // Permet les champs supplémentaires comme 'stocks'
         ]);
     }
 }

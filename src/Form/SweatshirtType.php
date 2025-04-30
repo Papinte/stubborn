@@ -29,7 +29,7 @@ class SweatshirtType extends AbstractType
             ])
             ->add('image', FileType::class, [
                 'label' => 'Image (JPEG ou PNG)',
-                'mapped' => false, // On gérera l’upload manuellement
+                'mapped' => false,
                 'required' => false,
                 'constraints' => [
                     new File([
@@ -41,8 +41,7 @@ class SweatshirtType extends AbstractType
                         'mimeTypesMessage' => 'Veuillez uploader une image JPEG ou PNG',
                     ]),
                 ],
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
