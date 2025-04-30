@@ -1,0 +1,8 @@
+{
+    "stubs": [
+        "symfony/security-core",
+        "symfony/security-http",
+        "symfony/http-kernel",
+        "symfony/routing"
+    ]
+}

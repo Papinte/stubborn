@@ -85,7 +85,8 @@ class RegistrationController extends AbstractController
     
         $this->addFlash('success', 'Votre adresse e-mail a été vérifiée.');
     
-        $this->security->login($user, 'form_login', 'main');
+        // Utiliser le bon authentificateur pour la connexion automatique
+        $this->security->login($user, 'App\Security\CustomFormLoginAuthenticator', 'main');
     
         return $this->redirectToRoute('app_home');
     }

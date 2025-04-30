@@ -12,15 +12,19 @@ class LoginController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // get the login error if there is one
+        // Récupérer l'erreur d'authentification s'il y en a une
         $error = $authenticationUtils->getLastAuthenticationError();
 
-        // last username entered by the user
+        // Dernier nom d'utilisateur saisi
         $lastUsername = $authenticationUtils->getLastUsername();
+
+        // Récupérer le message d'erreur personnalisé
+        $errorMessage = $error ? $error->getMessage() : null;
 
         return $this->render('login/login.html.twig', [
             'last_username' => $lastUsername,
             'error' => $error,
+            'error_message' => $errorMessage,
         ]);
     }
 
