@@ -4,7 +4,7 @@ doctrine:
         charset: utf8mb4
         default_table_options:
             collate: utf8mb4_unicode_ci
-        server_version: 'mariadb-10.4.32'
+        server_version: '10.4.32-MariaDB'
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
     orm:
