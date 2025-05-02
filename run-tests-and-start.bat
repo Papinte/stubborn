@@ -1,6 +1,6 @@
 @echo off
 echo Running tests...
-vendor\bin\phpunit tests\CartTest.php tests\OrderTest.php
+vendor\bin\phpunit tests
 if %ERRORLEVEL% equ 0 (
     echo Tests passed, starting server...
     symfony server:start

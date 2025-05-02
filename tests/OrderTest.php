@@ -29,13 +29,11 @@ class OrderTest extends KernelTestCase
     {
         self::bootKernel();
         $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
-        // Utiliser une session simulée avec un stockage en mémoire
         $this->session = new Session(new MockArraySessionStorage());
         $this->stripeService = $this->createMock(StripeService::class);
         $this->mailer = $this->createMock(MailerInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
-        // Récupérer le RequestStack existant depuis le conteneur
         $this->requestStack = self::getContainer()->get('request_stack');
         $request = new Request();
         $request->setSession($this->session);
@@ -44,13 +42,13 @@ class OrderTest extends KernelTestCase
 
     public function testCheckoutSuccess(): void
     {
-        // Récupérer un utilisateur existant dans stubborn
+        // Récupérer un utilisateur existant dans stubborn_test
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'test@example.com']);
-        $this->assertNotNull($user, 'L’utilisateur "test@example.com" devrait exister dans la base stubborn.');
+        $this->assertNotNull($user, 'L’utilisateur "test@example.com" devrait exister dans la base stubborn_test.');
 
-        // Récupérer un sweatshirt existant dans stubborn
+        // Récupérer un sweatshirt existant dans stubborn_test
         $sweatshirt = $this->entityManager->getRepository(Sweatshirt::class)->findOneBy(['name' => 'Blackbelt']);
-        $this->assertNotNull($sweatshirt, 'Le sweatshirt "Blackbelt" devrait exister dans la base stubborn.');
+        $this->assertNotNull($sweatshirt, 'Le sweatshirt "Blackbelt" devrait exister dans la base stubborn_test.');
 
         // Vérifier que le stock pour la taille S existe et est suffisant
         $stock = $this->entityManager->getRepository(Stock::class)->findOneBy(['sweatshirt' => $sweatshirt, 'size' => 'S']);
@@ -68,21 +66,28 @@ class OrderTest extends KernelTestCase
         ];
         $this->session->set('cart', $cart);
 
-        // Simuler un PaymentIntent Stripe réussi
-        $paymentIntentMock = new \stdClass();
-        $paymentIntentMock->status = 'succeeded';
-        $paymentIntent = new \Stripe\PaymentIntent('pi_123', ['client_secret' => 'fake-secret']);
+        // Simuler un PaymentIntent Stripe
+        $paymentIntent = new \Stripe\PaymentIntent('pi_123', ['client_secret' => 'fake-secret', 'status' => 'requires_confirmation']);
         $this->stripeService->method('createPaymentIntent')
             ->willReturn($paymentIntent);
-        $this->stripeService->method('confirmPaymentIntent')
-            ->willReturn(null);
 
-        // Simuler une requête POST pour checkout
+        // Simuler confirmPaymentIntent sans exception (void)
+        $this->stripeService->method('confirmPaymentIntent')
+            ->with($this->equalTo('pi_123'))
+            ->will($this->returnCallback(function () {
+                // Ne rien retourner (void)
+            }));
+
+        // Simuler une requête POST pour checkout avec payment_intent_id
         $request = new Request([], [], [], [], [], [], json_encode([
             'payment_intent_id' => 'pi_123',
         ]));
         $request->setMethod('POST');
         $request->setSession($this->session);
+
+        // Simuler l'envoi d'email
+        $this->mailer->expects($this->once())
+            ->method('send');
 
         // Créer une instance de CartController
         $controller = new CartController($this->logger);
@@ -96,11 +101,21 @@ class OrderTest extends KernelTestCase
         $response = $controller->checkout($request, $this->stripeService, $this->entityManager, $this->mailer);
 
         // Vérifier que la redirection est correcte
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals('/cart', $response->headers->get('location'));
+        $this->assertEquals(302, $response->getStatusCode(), 'La redirection devrait retourner un code 302.');
+        $this->assertEquals('/cart', $response->headers->get('location'), 'La redirection devrait aller vers /cart.');
+
+        // Vérifier les messages flash pour déboguer
+        $flashMessages = $this->session->getFlashBag()->all();
+        if (!isset($flashMessages['success'])) {
+            $this->fail('Échec du paiement : aucun message de succès. Flash messages : ' . json_encode($flashMessages));
+        }
+
+        $this->assertArrayHasKey('success', $flashMessages, 'Un message de succès devrait être présent.');
+        $this->assertEquals('Votre commande a été validée et réglée avec succès !', $flashMessages['success'][0], 'Le message de succès devrait être correct.');
 
         // Vérifier que le panier a été vidé
-        $this->assertEmpty($this->session->get('cart'), 'Le panier devrait être vidé après le règlement.');
+        $cartAfterCheckout = $this->session->get('cart', []);
+        $this->assertEmpty($cartAfterCheckout, 'Le panier devrait être vidé après le règlement.');
 
         // Vérifier que le stock a été mis à jour
         $updatedStock = $this->entityManager->getRepository(Stock::class)->findOneBy(['sweatshirt' => $sweatshirt, 'size' => 'S']);

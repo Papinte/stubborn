@@ -46,9 +46,9 @@ class CartTest extends KernelTestCase
 
     public function testAddToCart(): void
     {
-        // Récupérer un sweatshirt existant dans stubborn
+        // Récupérer un sweatshirt existant dans stubborn_test
         $sweatshirt = $this->entityManager->getRepository(Sweatshirt::class)->findOneBy(['name' => 'Blackbelt']);
-        $this->assertNotNull($sweatshirt, 'Le sweatshirt "Blackbelt" devrait exister dans la base stubborn.');
+        $this->assertNotNull($sweatshirt, 'Le sweatshirt "Blackbelt" devrait exister dans la base stubborn_test.');
 
         // Vérifier que le stock pour la taille S existe et est suffisant
         $stock = $this->entityManager->getRepository(Stock::class)->findOneBy(['sweatshirt' => $sweatshirt, 'size' => 'S']);

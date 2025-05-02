@@ -4,7 +4,7 @@ doctrine:
         charset: utf8mb4
         default_table_options:
             collate: utf8mb4_unicode_ci
-        server_version: 'mariadb-10.4.28'
+        server_version: 'mariadb-10.4.32'
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
     orm:
@@ -27,8 +27,7 @@ doctrine:
 when@test:
     doctrine:
         dbal:
-            # Désactiver le suffixe _test
-            dbname_suffix: ''
+            # Laisser Symfony ajouter le suffixe _test par défaut
 
 when@prod:
     doctrine:
