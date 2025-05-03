@@ -8,37 +8,38 @@
 {% endblock %}
 {% block body %}
 {% block header %}
-    <header class="header">
-        <div class="logo">
+    <header>
+        <div class="en-tete container">
+        <div>
             <img src="{{ asset('images/header/Logo.png') }}" alt="logo de la marque" />
             <p>Don't compromise on your look</p>
+            </div>
+            <nav class="menu">
+                <a href="{{ path('app_home') }}" class="{% if app.request.get('_route') == 'app_home' %}active{% endif %}">Accueil</a>
+                {% if app.user %}
+                    <a href="{{ path('app_products') }}" class="{% if app.request.get('_route') == 'app_products' %}active{% endif %}">Boutique</a>
+                    <a href="{{ path('app_cart') }}" class="{% if app.request.get('_route') == 'app_cart' %}active{% endif %}">Panier</a>
+                    <a href="{{ path('app_logout') }}">Se déconnecter</a>
+                {% else %}
+                    <a href="{{ path('app_register') }}" class="{% if app.request.get('_route') == 'app_register' %}active{% endif %}">S'inscrire</a>
+                    <a href="{{ path('app_login') }}" class="{% if app.request.get('_route') == 'app_login' %}active{% endif %}">Se connecter</a>
+                {% endif %}
+            </nav>
         </div>
-        <nav class="menu">
-            <a href="{{ path('app_products') }}" class="{% if app.request.get('_route') == 'app_products' %}active{% endif %}">Accueil</a>
-            {% if app.user %}
-                <a href="{{ path('app_products') }}" class="{% if app.request.get('_route') == 'app_products' %}active{% endif %}">Boutique</a>
-                <a href="{{ path('app_cart') }}" class="{% if app.request.get('_route') == 'app_cart' %}active{% endif %}">Panier</a>
-                <a href="{{ path('app_logout') }}">Se déconnecter</a>
-            {% else %}
-                <a href="{{ path('app_register') }}" class="{% if app.request.get('_route') == 'app_register' %}active{% endif %}">S'inscrire</a>
-                <a href="{{ path('app_login') }}" class="{% if app.request.get('_route') == 'app_login' %}active{% endif %}">Se connecter</a>
-            {% endif %}
-        </nav>
     </header>
 {% endblock %}
-    <section class="featured-products">
-        <h2>Sweat-shirts mis en avant</h2>
-        <div class="products-grid">
+    <div class="container products">
             {% for sweatshirt in featuredSweatshirts %}
-                <div class="product-card">
+                <div class="card">
                     <img src="{{ asset('images/' ~ sweatshirt.image) }}" alt="{{ sweatshirt.name }}" />
                     <h3>{{ sweatshirt.name }}</h3>
-                    <p>Prix : {{ sweatshirt.price }} €</p>
-                    {% if app.user %}
-                        <a href="{{ path('app_product', {'id': sweatshirt.id}) }}" class="btn-view">Voir</a>
-                    {% endif %}
+                    <div class="price-button">
+                        <p>Prix : {{ sweatshirt.price }} €</p>
+                        {% if app.user %}
+                            <a href="{{ path('app_product', {'id': sweatshirt.id}) }}" class="button">Voir</a>
+                        {% endif %}
+                    </div>
                 </div>
             {% endfor %}
-        </div>
-    </section>
+    </div>
 {% endblock %}
