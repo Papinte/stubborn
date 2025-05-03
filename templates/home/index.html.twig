@@ -2,47 +2,43 @@
 
 {% block title %}Accueil - Stubborn{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('home') }}
+{% endblock %}
 {% block body %}
-    <h1>Stubborn</h1>
-
-    {# Informations de la société #}
-    <section>
-        <h2>À propos de Stubborn</h2>
-        <p><strong>Nom :</strong> Stubborn</p>
-        <p><strong>Adresse :</strong> Piccadilly Circus, London W1J 0DA, Royaume-Uni</p>
-        <p><strong>Contact :</strong> stubborn@blabla.com</p>
-        <p><strong>Slogan :</strong> Don't compromise on your look</p>
-    </section>
-
-    {# Menu dynamique #}
-    <nav>
-        <ul>
-            <li><a href="{{ path('app_home') }}">Accueil</a></li>
+{% block header %}
+    <header class="header">
+        <div class="logo">
+            <img src="{{ asset('images/header/Logo.png') }}" alt="logo de la marque" />
+            <p>Don't compromise on your look</p>
+        </div>
+        <nav class="menu">
+            <a href="{{ path('app_products') }}" class="{% if app.request.get('_route') == 'app_products' %}active{% endif %}">Accueil</a>
             {% if app.user %}
-                <li><a href="{{ path('app_products') }}">Boutique</a></li>
-                <li><a href="{{ path('app_cart') }}">Panier</a></li>
-                <li><a href="{{ path('app_logout') }}">Se déconnecter</a></li>
+                <a href="{{ path('app_products') }}" class="{% if app.request.get('_route') == 'app_products' %}active{% endif %}">Boutique</a>
+                <a href="{{ path('app_cart') }}" class="{% if app.request.get('_route') == 'app_cart' %}active{% endif %}">Panier</a>
+                <a href="{{ path('app_logout') }}">Se déconnecter</a>
             {% else %}
-                <li><a href="{{ path('app_register') }}">S'inscrire</a></li>
-                <li><a href="{{ path('app_login') }}">Se connecter</a></li>
+                <a href="{{ path('app_register') }}" class="{% if app.request.get('_route') == 'app_register' %}active{% endif %}">S'inscrire</a>
+                <a href="{{ path('app_login') }}" class="{% if app.request.get('_route') == 'app_login' %}active{% endif %}">Se connecter</a>
             {% endif %}
-        </ul>
-    </nav>
-
-    {# Sweat-shirts mis en avant #}
-    <section>
+        </nav>
+    </header>
+{% endblock %}
+    <section class="featured-products">
         <h2>Sweat-shirts mis en avant</h2>
-        {% for sweatshirt in featuredSweatshirts %}
-            <div>
-                <h3>{{ sweatshirt.name }}</h3>
-                <p>Prix : {{ sweatshirt.price }} €</p>
-                <img src="{{ asset('images/' ~ sweatshirt.image) }}" alt="{{ sweatshirt.name }}" width="200">
-                {% if app.user %}
-                    <a href="{{ path('app_product', {'id': sweatshirt.id}) }}">Voir</a>
-                {% endif %}
-            </div>
-        {% else %}
-            <p>Aucun sweat-shirt mis en avant.</p>
-        {% endfor %}
+        <div class="products-grid">
+            {% for sweatshirt in featuredSweatshirts %}
+                <div class="product-card">
+                    <img src="{{ asset('images/' ~ sweatshirt.image) }}" alt="{{ sweatshirt.name }}" />
+                    <h3>{{ sweatshirt.name }}</h3>
+                    <p>Prix : {{ sweatshirt.price }} €</p>
+                    {% if app.user %}
+                        <a href="{{ path('app_product', {'id': sweatshirt.id}) }}" class="btn-view">Voir</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
     </section>
 {% endblock %}
