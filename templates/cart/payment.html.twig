@@ -42,7 +42,7 @@
             <!-- Stripe Elements will create a card input here -->
         </div>
         <div id="card-errors" role="alert" class="text-danger"></div>
-        <button id="submit-payment" class="btn btn-success">Payer {{ totalPrice }} €</button>
+        <button id="submit-payment" class="btn btn-success" data-turbo="false">Payer {{ totalPrice }} €</button>
     </form>
 
     <p><a href="{{ path('app_cart') }}">Retour au panier</a></p>
@@ -54,19 +54,15 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initialiser Stripe avec la clé publique
-            console.log('Clé publique Stripe:', '{{ stripePublicKey }}');
             const stripe = Stripe('{{ stripePublicKey }}');
             const elements = stripe.elements();
 
             // Créer l'élément de carte
-            console.log('Création de l\'élément de carte');
             const cardElement = elements.create('card');
             const cardElementDiv = document.getElementById('card-element');
             if (cardElementDiv) {
                 cardElement.mount('#card-element');
-                console.log('Élément de carte monté sur #card-element');
             } else {
-                console.error('L\'élément #card-element n\'existe pas dans le DOM');
                 document.getElementById('card-errors').textContent = 'Erreur : Impossible de charger le formulaire de paiement.';
                 return;
             }
@@ -75,7 +71,6 @@
             const displayError = document.getElementById('card-errors');
             cardElement.on('change', function(event) {
                 if (event.error) {
-                    console.log('Erreur dans l\'élément de carte:', event.error.message);
                     displayError.textContent = event.error.message;
                 } else {
                     displayError.textContent = '';
@@ -92,7 +87,6 @@
                 submitButton.disabled = true;
 
                 try {
-                    console.log('Formulaire de paiement soumis');
                     // Créer un PaymentIntent côté serveur
                     const response = await fetch('{{ path('app_cart_create_payment_intent') }}', {
                         method: 'POST',
@@ -104,11 +98,8 @@
                     const data = await response.json();
 
                     if (data.error) {
-                        console.log('Erreur lors de la création du PaymentIntent:', data.error);
                         throw new Error(data.error);
                     }
-
-                    console.log('PaymentIntent créé avec succès:', data.clientSecret);
 
                     // Confirmer le paiement avec Stripe Elements
                     const result = await stripe.confirmCardPayment(data.clientSecret, {
@@ -118,38 +109,34 @@
                     });
 
                     if (result.error) {
-                        console.log('Erreur lors de la confirmation du paiement:', result.error.message);
                         throw new Error(result.error.message);
                     }
 
                     if (result.paymentIntent.status === 'succeeded') {
-                        console.log('Paiement réussi, envoi de la requête POST à /cart/checkout');
                         // Envoyer une requête POST à /cart/checkout
                         const checkoutResponse = await fetch('{{ path('app_cart_checkout') }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest',
                             },
                             body: JSON.stringify({
                                 payment_intent_id: result.paymentIntent.id,
                             }),
                         });
 
+                        const checkoutData = await checkoutResponse.json();
+
                         if (!checkoutResponse.ok) {
-                            const errorData = await checkoutResponse.json();
-                            console.log('Erreur lors de la finalisation:', errorData);
-                            throw new Error(errorData.error || 'Erreur lors de la finalisation de la commande.');
+                            throw new Error(checkoutData.error || 'Erreur lors de la finalisation de la commande.');
                         }
 
-                        console.log('Requête POST réussie, redirection vers /cart');
-                        // Redirection après succès
-                        window.location.href = '{{ path('app_cart') }}';
+                        // Rediriger manuellement vers l'URL fournie dans la réponse JSON
+                        window.location.href = checkoutData.redirect;
                     } else {
-                        console.log('Statut du paiement inattendu:', result.paymentIntent.status);
                         throw new Error('Paiement non terminé. Statut: ' + result.paymentIntent.status);
                     }
                 } catch (error) {
-                    console.log('Erreur générale:', error.message);
                     displayError.textContent = error.message;
                     submitButton.disabled = false;
                 }

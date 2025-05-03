@@ -4,7 +4,7 @@ doctrine:
         charset: utf8mb4
         default_table_options:
             collate: utf8mb4_unicode_ci
-        server_version: '8.0.32' # Version de MySQL dans XAMPP
+        server_version: '10.4.32-MariaDB'
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
     orm:
@@ -27,8 +27,7 @@ doctrine:
 when@test:
     doctrine:
         dbal:
-            # Ajoute un suffixe pour les tests (utilisé par ParaTest)
-            dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+            # Laisser Symfony ajouter le suffixe _test par défaut
 
 when@prod:
     doctrine:
