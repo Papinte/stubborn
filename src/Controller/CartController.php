@@ -64,7 +64,7 @@ class CartController extends AbstractController
     }
 
     #[Route('/cart/add/{id}', name: 'app_cart_add')]
-    public function add(Request $request, int $id): Response
+    public function add(Request $request, int $id, EntityManagerInterface $entityManager): Response
     {
         $size = $request->request->get('size');
 
@@ -73,10 +73,21 @@ class CartController extends AbstractController
             return $this->redirectToRoute('app_product', ['id' => $id]);
         }
 
+        // Récupérer le sweatshirt depuis la base de données
+        $sweatshirt = $entityManager->getRepository(Sweatshirt::class)->find($id);
+        if (!$sweatshirt) {
+            $this->addFlash('error', 'Produit non trouvé.');
+            return $this->redirectToRoute('app_product', ['id' => $id]);
+        }
+
+        // Récupérer le panier depuis la session
         $cart = $request->getSession()->get('cart', []);
         $cart[] = [
             'id' => $id,
+            'name' => $sweatshirt->getName(),
             'size' => $size,
+            'price' => $sweatshirt->getPrice(),
+            'image' => $sweatshirt->getImage(),
         ];
         $request->getSession()->set('cart', $cart);
 
@@ -96,19 +107,8 @@ class CartController extends AbstractController
                 throw new \LogicException('Votre panier est vide.');
             }
 
-            // Mettre à jour le panier avec les prix des sweatshirts
-            $updatedCart = [];
-            foreach ($cart as $item) {
-                $sweatshirt = $entityManager->getRepository(Sweatshirt::class)->find($item['id']);
-                if (!$sweatshirt) {
-                    throw new \LogicException('Article introuvable : ID ' . $item['id']);
-                }
-                $updatedCart[] = [
-                    'id' => $item['id'],
-                    'size' => $item['size'],
-                    'price' => $sweatshirt->getPrice(),
-                ];
-            }
+            // On utilise directement les prix déjà stockés dans le panier
+            $updatedCart = $cart;
 
             // Vérifier le stock
             foreach ($updatedCart as $item) {
@@ -144,7 +144,7 @@ class CartController extends AbstractController
     }
 
     #[Route('/cart/payment', name: 'app_cart_payment')]
-    public function payment(Request $request, EntityManagerInterface $entityManager): Response
+    public function payment(Request $request): Response
     {
         // Récupérer le panier depuis la session
         $cart = $request->getSession()->get('cart', []);
@@ -154,25 +154,14 @@ class CartController extends AbstractController
             return $this->redirectToRoute('app_cart');
         }
 
-        // Mettre à jour le panier avec les informations nécessaires pour l'affichage
-        $updatedCart = [];
+        // Calculer le prix total
         $totalPrice = 0;
         foreach ($cart as $item) {
-            $sweatshirt = $entityManager->getRepository(Sweatshirt::class)->find($item['id']);
-            if (!$sweatshirt) {
-                throw new \LogicException('Article introuvable : ID ' . $item['id']);
-            }
-            $updatedCart[] = [
-                'id' => $item['id'],
-                'name' => $sweatshirt->getName(),
-                'size' => $item['size'],
-                'price' => $sweatshirt->getPrice(),
-            ];
-            $totalPrice += $sweatshirt->getPrice();
+            $totalPrice += $item['price'];
         }
 
         return $this->render('cart/payment.html.twig', [
-            'cart' => $updatedCart,
+            'cart' => $cart,
             'totalPrice' => $totalPrice,
             'stripePublicKey' => $this->getParameter('stripe_public_key'),
         ]);
@@ -208,24 +197,14 @@ class CartController extends AbstractController
                 throw new \LogicException('Votre panier est vide.');
             }
 
-            // Mettre à jour le panier avec les informations nécessaires
-            $updatedCart = [];
+            // On utilise directement les données du panier
+            $updatedCart = $cart;
             $totalPrice = 0;
-            foreach ($cart as $item) {
-                $sweatshirt = $entityManager->getRepository(Sweatshirt::class)->find($item['id']);
-                if (!$sweatshirt) {
-                    throw new \LogicException('Article introuvable : ID ' . $item['id']);
-                }
-                $updatedCart[] = [
-                    'id' => $item['id'],
-                    'name' => $sweatshirt->getName(),
-                    'size' => $item['size'],
-                    'price' => $sweatshirt->getPrice(),
-                ];
-                $totalPrice += $sweatshirt->getPrice();
+            foreach ($updatedCart as $item) {
+                $totalPrice += $item['price'];
             }
 
-            // Vérifier le stock avant de confirmer
+            // Vérifier et mettre à jour le stock
             foreach ($updatedCart as $item) {
                 $sweatshirt = $entityManager->getRepository(Sweatshirt::class)->find($item['id']);
                 if (!$sweatshirt) {

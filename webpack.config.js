@@ -14,6 +14,7 @@ Encore
     .addStyleEntry('registration', './assets/styles/registration/registration.css')
     .addStyleEntry('products', './assets/styles/products/products.css')
     .addStyleEntry('product', './assets/styles/product/product.css')
+    .addStyleEntry('cart', './assets/styles/cart/cart.css')
     .splitEntryChunks()
     .enableSingleRuntimeChunk()
     .cleanupOutputBeforeBuild()

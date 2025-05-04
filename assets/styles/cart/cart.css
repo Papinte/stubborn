@@ -1,0 +1,139 @@
+.cart-page {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.cart-page h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.cart-item {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.cart-item-image {
+    flex: 0 0 100px;
+}
+
+.cart-item-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.cart-item-details {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.cart-item-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.cart-item-price {
+    font-size: 16px;
+    color: #666;
+    margin: 0;
+}
+
+.cart-item-size {
+    font-size: 16px;
+    color: #666;
+    margin: 0;
+}
+
+.btn-remove {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+    align-self: flex-end;
+}
+
+.btn-remove:hover {
+    background-color: black;
+    color: white;
+}
+
+.cart-summary {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-end;
+}
+
+.cart-total {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.btn-finalize {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #ff6f61;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.btn-finalize:hover {
+    background-color: #ff5a4d;
+}
+
+.btn-continue {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.btn-continue:hover {
+    background-color: #218838;
+}
