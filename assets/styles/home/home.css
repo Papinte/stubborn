@@ -3,7 +3,7 @@ body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
 }
-/* Main container */
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -11,7 +11,6 @@ body {
     box-sizing: border-box;
 }
 
-/* Featured products section */
 .products {
     margin-top: 50px;
     display: flex;
@@ -48,8 +47,8 @@ body {
 }
 
 .price-button {
-    display: flex; /* Met le prix et le bouton sur la même ligne */
-    align-items: center; /* Centre verticalement les éléments */
+    display: flex;
+    align-items: center;
     justify-content: space-between;
 }
 .button{
