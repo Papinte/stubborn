@@ -2,18 +2,29 @@
 
 {% block title %}{{ sweatshirt.name }} - Stubborn{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('product') }}
+{% endblock %}
+
 {% block body %}
-    <h1>{{ sweatshirt.name }}</h1>
+    <div class="product-detail">
+        <div class="product-image">
+            <img src="{{ asset('images/' ~ sweatshirt.image) }}" alt="{{ sweatshirt.name }}">
+        </div>
+        <div class="product-info">
+            <p class="product-name">{{ sweatshirt.name }}</p>
+            <p class="product-price">Prix : {{ sweatshirt.price }} €</p>
 
-    <p>Prix : {{ sweatshirt.price }} €</p>
-    <img src="{{ asset('images/' ~ sweatshirt.image) }}" alt="{{ sweatshirt.name }}" width="200">
+            {% for flash_message in app.flashes('success') %}
+                <div class="alert alert-success">{{ flash_message }}</div>
+            {% endfor %}
 
-    {% for flash_message in app.flashes('success') %}
-        <div class="alert alert-success">{{ flash_message }}</div>
-    {% endfor %}
-
-    {{ form_start(form) }}
-        {{ form_row(form.size) }}
-        {{ form_row(form.submit) }}
-    {{ form_end(form) }}
+            {{ form_start(form, {'attr': {'class': 'product-form'}}) }}
+                {{ form_label(form.size, 'Taille') }}
+                {{ form_widget(form.size, {'attr': {'class': 'form-size'}}) }}
+                {{ form_widget(form.submit, {'attr': {'class': 'add-to-cart'}}) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
 {% endblock %}

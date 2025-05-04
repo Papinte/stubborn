@@ -13,6 +13,7 @@ Encore
     .addStyleEntry('login', './assets/styles/login/login.css')
     .addStyleEntry('registration', './assets/styles/registration/registration.css')
     .addStyleEntry('products', './assets/styles/products/products.css')
+    .addStyleEntry('product', './assets/styles/product/product.css')
     .splitEntryChunks()
     .enableSingleRuntimeChunk()
     .cleanupOutputBeforeBuild()
