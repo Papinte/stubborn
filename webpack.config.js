@@ -11,6 +11,7 @@ Encore
     .addEntry('bootstrap', './assets/bootstrap.js')
     .addStyleEntry('home', './assets/styles/home/home.css')
     .addStyleEntry('login', './assets/styles/login/login.css')
+    .addStyleEntry('registration', './assets/styles/registration/registration.css')
     .splitEntryChunks()
     .enableSingleRuntimeChunk()
     .cleanupOutputBeforeBuild()
