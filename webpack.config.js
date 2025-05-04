@@ -8,8 +8,9 @@ Encore
     .setOutputPath('public/build/')
     .setPublicPath('/build')
     .addEntry('app', './assets/app.js')
-    .addEntry('bootstrap', './assets/bootstrap.js') // Ajout de bootstrap.js
+    .addEntry('bootstrap', './assets/bootstrap.js')
     .addStyleEntry('home', './assets/styles/home/home.css')
+    .addStyleEntry('login', './assets/styles/login/login.css')
     .splitEntryChunks()
     .enableSingleRuntimeChunk()
     .cleanupOutputBeforeBuild()

@@ -15,6 +15,27 @@
         {% endblock %}
     </head>
     <body>
+        {% block header %}
+            <header>
+                <div class="en-tete container">
+                <div>
+                    <img src="{{ asset('images/header/Logo.png') }}" alt="logo de la marque" />
+                    <p>Don't compromise on your look</p>
+                    </div>
+                    <nav class="menu">
+                        <a href="{{ path('app_home') }}" class="{% if app.request.get('_route') == 'app_home' %}active{% endif %}">Accueil</a>
+                        {% if app.user %}
+                            <a href="{{ path('app_products') }}" class="{% if app.request.get('_route') == 'app_products' %}active{% endif %}">Boutique</a>
+                            <a href="{{ path('app_cart') }}" class="{% if app.request.get('_route') == 'app_cart' %}active{% endif %}">Panier</a>
+                            <a href="{{ path('app_logout') }}">Se déconnecter</a>
+                        {% else %}
+                            <a href="{{ path('app_register') }}" class="{% if app.request.get('_route') == 'app_register' %}active{% endif %}">S'inscrire</a>
+                            <a href="{{ path('app_login') }}" class="{% if app.request.get('_route') == 'app_login' %}active{% endif %}">Se connecter</a>
+                        {% endif %}
+                    </nav>
+                </div>
+            </header>
+        {% endblock %}
         {% for type, messages in app.flashes %}
             {% for message in messages %}
                 <div class="alert alert-{{ type }}" role="alert">
