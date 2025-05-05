@@ -15,6 +15,7 @@ Encore
     .addStyleEntry('products', './assets/styles/products/products.css')
     .addStyleEntry('product', './assets/styles/product/product.css')
     .addStyleEntry('cart', './assets/styles/cart/cart.css')
+    .addStyleEntry('admin', './assets/styles/admin/admin.css')
     .splitEntryChunks()
     .enableSingleRuntimeChunk()
     .cleanupOutputBeforeBuild()
