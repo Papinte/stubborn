@@ -1,0 +1,233 @@
+% Initializing document class and setting up the basic structure
+\documentclass[a4paper,11pt]{article}
+
+% Including essential packages for document formatting
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{tocloft}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+
+% Configuring page geometry for balanced margins
+\geometry{margin=2.5cm}
+
+% Setting up hyperlinks for table of contents and references
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue
+}
+
+% Customizing section titles for a modern look
+\titleformat{\section}{\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{1em}{}
+
+% Configuring header and footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Setting paragraph spacing and indentation
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0em}
+
+% Customizing table of contents appearance
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsecfont}{\bfseries}
+\renewcommand{\cftsecpagefont}{\normalfont}
+
+% Starting the document
+\begin{document}
+
+% Creating the title page
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    {\Huge\bfseries Documentation de l'application Stubborn\par}
+    \vspace{1cm}
+    {\Large Boutique en ligne de sweat-shirts\par}
+    \vspace{2cm}
+    {\large Version 1.0\par}
+    \vspace{0.5cm}
+    {\large Date : 5 mai 2025\par}
+    \vspace{3cm}
+    {\large Développé par : Antoine Papin\par}
+    \vfill
+\end{titlepage}
+
+% Adding table of contents
+\tableofcontents
+\newpage
+
+% Introduction section
+\section{Introduction}
+L'application Stubborn est une boutique en ligne développée avec le framework Symfony 7.2, conçue pour vendre des sweat-shirts personnalisés. Elle offre une interface utilisateur intuitive pour les clients et un back-office robuste pour les administrateurs. Ce document présente les fonctionnalités principales, l'architecture technique, et les instructions pour installer et utiliser l'application.
+
+\subsection{Objectifs}
+L'objectif principal de Stubborn est de fournir une plateforme e-commerce simple et efficace, permettant aux utilisateurs de :
+\begin{itemize}
+    \item Parcourir et acheter des sweat-shirts disponibles en différentes tailles (XS à XL).
+    \item Gérer leur panier et effectuer des paiements sécurisés via Stripe.
+    \item Administrer les produits (ajout, modification, suppression) via un back-office.
+    \item Gérer les comptes utilisateurs avec authentification et vérification d'e-mail.
+\end{itemize}
+
+% Features section
+\section{Fonctionnalités principales}
+L'application Stubborn propose les fonctionnalités suivantes, organisées en deux interfaces : client et administrateur.
+
+\subsection{Interface client}
+\begin{itemize}
+    \item \textbf{Boutique} : Affiche la liste des sweat-shirts avec leurs images, noms, prix, et tailles disponibles. Les sweat-shirts mis en avant sont highlightés sur la page d'accueil.
+    \item \textbf{Fiche produit} : Permet de consulter les détails d'un sweat-shirt et d'ajouter au panier en sélectionnant une taille.
+    \item \textbf{Panier} : Permet d'ajouter, supprimer des articles, et visualiser le total avant le paiement.
+    \item \textbf{Paiement} : Intègre Stripe pour des paiements sécurisés. En mode test, utilise la carte 4242 4242 4242 4242.
+    \item \textbf{Compte utilisateur} : Permet aux utilisateurs de s'inscrire, se connecter, vérifier leur e-mail, et gérer leur profil (nom, adresse de livraison).
+\end{itemize}
+
+\subsection{Back-office administrateur}
+\begin{itemize}
+    \item \textbf{Gestion des produits} : Permet de modifier le nom, le prix, l'image, les stocks (XS, S, M, L, XL), et l'état "mis en avant" des sweat-shirts existants.
+    \item \textbf{Ajout de produits} : Formulaire pour ajouter de nouveaux sweat-shirts avec les mêmes champs que pour la modification.
+    \item \textbf{Suppression} : Suppression sécurisée des produits avec vérification CSRF.
+\end{itemize}
+
+% Technical architecture section
+\section{Architecture technique}
+L'application est construite sur une architecture MVC avec Symfony 7.2, utilisant des technologies modernes pour une expérience fluide.
+
+\subsection{Technologies utilisées}
+\begin{itemize}
+    \item \textbf{Backend} : Symfony 7.2 (PHP 8.2+), Doctrine ORM pour la gestion des entités.
+    \item \textbf{Frontend} : Twig pour les templates, Bootstrap pour les styles, Webpack Encore pour la gestion des assets.
+    \item \textbf{Paiement} : API Stripe pour le traitement des paiements.
+    \item \textbf{Base de données} : MySQL/PostgreSQL (configurable via Doctrine).
+    \item \textbf{Sécurité} : Symfony Security pour l'authentification, gestion des rôles, et vérification CSRF.
+    \item \textbf{E-mails} : Symfony Mailer pour l'envoi de confirmations (inscription, commande).
+    \item \textbf{Vérification d'e-mail} : SymfonyCasts VerifyEmail pour la vérification des adresses e-mail.
+\end{itemize}
+
+\subsection{Structure des entités}
+Les principales entités de l'application sont :
+\begin{itemize}
+    \item \textbf{Sweatshirt} : Représente un produit sweat-shirt. Champs : \texttt{id}, \texttt{name}, \texttt{price}, \texttt{isFeatured}, \texttt{image}, \texttt{stocks} (relation One-to-Many avec Stock).
+    \item \textbf{Stock} : Représente une entrée de stock pour une taille spécifique. Champs : \texttt{id}, \texttt{size} (XS à XL), \texttt{quantity}, \texttt{sweatshirt} (relation Many-to-One avec Sweatshirt).
+    \item \textbf{User} : Représente un utilisateur. Champs : \texttt{id}, \texttt{email}, \texttt{roles}, \texttt{password}, \texttt{name}, \texttt{deliveryAddress}, \texttt{isVerified}.
+\end{itemize}
+
+\subsection{Contrôleurs principaux}
+Les contrôleurs gèrent la logique métier et les interactions utilisateur :
+\begin{itemize}
+    \item \textbf{AdminController} : Gère le back-office, permettant l'ajout, la modification, et la suppression des sweat-shirts. Inclut la gestion des formulaires et des images.
+    \item \textbf{CartController} : Gère le panier (ajout, suppression, affichage), le paiement via Stripe, et l'envoi d'e-mails de confirmation.
+    \item \textbf{HomeController} : Affiche la page d'accueil avec les sweat-shirts mis en avant.
+    \item \textbf{LoginController} : Gère la connexion et la déconnexion des utilisateurs.
+    \item \textbf{ProductController} : Gère l'affichage des détails d'un sweat-shirt et l'ajout au panier.
+    \item \textbf{ProductsController} : Affiche la liste des sweat-shirts avec un filtre par fourchette de prix.
+    \item \textbf{RegistrationController} : Gère l'inscription des utilisateurs et la vérification d'e-mail.
+\end{itemize}
+
+\subsection{Formulaires}
+Les formulaires définissent les interfaces pour la saisie des données :
+\begin{itemize}
+    \item \textbf{SweatshirtType} : Formulaire pour ajouter un nouveau sweat-shirt, avec les champs \texttt{name}, \texttt{price}, \texttt{isFeatured}, et \texttt{image}.
+    \item \textbf{SweatshirtInlineType} : Formulaire pour modifier un sweat-shirt existant dans le back-office, avec les mêmes champs et une gestion des stocks.
+    \item \textbf{RegistrationFormType} : Formulaire pour l'inscription des utilisateurs, avec les champs \texttt{name}, \texttt{email}, \texttt{plainPassword}, et \texttt{deliveryAddress}.
+\end{itemize}
+
+\subsection{Services}
+Les services encapsulent la logique métier réutilisable :
+\begin{itemize}
+    \item \textbf{StripeService} : Gère les interactions avec l'API Stripe, incluant la création, la confirmation, et la récupération des PaymentIntents pour les paiements.
+\end{itemize}
+
+\subsection{Listeners d'événements}
+Les listeners gèrent les événements spécifiques :
+\begin{itemize}
+    \item \textbf{ExceptionListener} : Intercepte les exceptions d'accès interdit (\texttt{AccessDeniedHttpException}) pour rediriger les utilisateurs non connectés vers la page de connexion ou afficher un message d'erreur pour les utilisateurs connectés sans autorisation.
+\end{itemize}
+
+\subsection{Repositories}
+Les repositories fournissent des méthodes personnalisées pour accéder aux données :
+\begin{itemize}
+    \item \textbf{SweatshirtRepository} : Fournit des méthodes pour récupérer les sweat-shirts, notamment \texttt{findByCriteria} pour filtrer par critères (par exemple, fourchette de prix).
+    \item \textbf{StockRepository} : Gère les entrées de stock, avec des méthodes standard pour accéder aux données.
+    \item \textbf{UserRepository} : Gère les utilisateurs, avec une méthode \texttt{upgradePassword} pour mettre à jour les mots de passe hachés.
+\end{itemize}
+
+\subsection{Sécurité}
+Les composants de sécurité assurent l'authentification et la vérification des utilisateurs :
+\begin{itemize}
+    \item \textbf{CustomFormLoginAuthenticator} : Gère l'authentification par formulaire, vérifiant les identifiants, l'état de vérification de l'e-mail, et redirigeant après connexion.
+    \item \textbf{EmailVerifier} : Gère l'envoi et la validation des e-mails de confirmation pour vérifier les adresses des utilisateurs.
+\end{itemize}
+
+\subsection{Routes principales}
+\begin{itemize}
+    \item \texttt{/} : Page d'accueil (\texttt{app\_home}).
+    \item \texttt{/products} : Liste des sweat-shirts (\texttt{app\_products}).
+    \item \texttt{/product/\{id\}} : Détails d'un sweat-shirt (\texttt{app\_product}).
+    \item \texttt{/cart} : Affichage du panier (\texttt{app\_cart}).
+    \item \texttt{/cart/add/\{id\}} : Ajout au panier (\texttt{app\_cart\_add}).
+    \item \texttt{/cart/remove/\{index\}} : Suppression d'un article du panier (\texttt{app\_cart\_remove}).
+    \item \texttt{/cart/payment} : Page de paiement (\texttt{app\_cart\_payment}).
+    \item \texttt{/cart/checkout} : Validation du paiement (\texttt{app\_cart\_checkout}).
+    \item \texttt{/cart/create-payment-intent} : Création d'un PaymentIntent Stripe (\texttt{app\_cart\_create\_payment\_intent}).
+    \item \texttt{/admin} : Back-office pour la gestion des produits (\texttt{app\_admin}).
+    \item \texttt{/admin/delete/\{id\}} : Suppression d'un sweat-shirt (\texttt{app\_admin\_delete}).
+    \item \texttt{/login} : Connexion utilisateur (\texttt{app\_login}).
+    \item \texttt{/logout} : Déconnexion utilisateur (\texttt{app\_logout}).
+    \item \texttt{/register} : Inscription utilisateur (\texttt{app\_register}).
+    \item \texttt{/verify/email} : Vérification de l'e-mail (\texttt{app\_verify\_email}).
+\end{itemize]
+
+% Installation instructions section
+\section{Instructions d'installation}
+Pour installer et exécuter l'application localement, suivez ces étapes :
+
+\subsection{Prérequis}
+\begin{itemize}
+    \item PHP 8.2 ou supérieur
+    \item Composer
+    \item Node.js et Yarn/NPM
+    \item MySQL/PostgreSQL
+    \item Clé API Stripe (publique et secrète)
+\end{itemize}
+
+\subsection{Étapes d'installation}
+\begin{enumerate}
+    \item Cloner le dépôt : \texttt{git clone <url-du-depot>}
+    \item Installer les dépendances PHP : \texttt{composer install}
+    \item Installer les dépendances JavaScript : \texttt{yarn install} ou \texttt{npm install}
+    \item Configurer la base de données dans \texttt{.env} : \\
+          \texttt{DATABASE\_URL="mysql://user:password@127.0.0.1:3306/stubborn"}
+    \item Créer la base de données : \texttt{php bin/console doctrine:database:create}
+    \item Exécuter les migrations : \texttt{php bin/console doctrine:migrations:migrate}
+    \item Compiler les assets : \texttt{yarn encore dev}
+    \item Configurer les clés Stripe dans \texttt{.env} : \\
+          \texttt{STRIPE\_PUBLIC\_KEY=pk\_test\_...} \\
+          \texttt{STRIPE\_SECRET\_KEY=sk\_test\_...}
+    \item Lancer le serveur : \texttt{symfony server:start}
+\end{enumerate}
+
+\subsection{Accès}
+\begin{itemize}
+    \item Boutique : \texttt{http://localhost:8000/products}
+    \item Back-office : \texttt{http://localhost:8000/admin}
+    \item Connexion/Inscription : \texttt{http://localhost:8000/login}, \texttt{http://localhost:8000/register}
+\end{itemize}
+
+% Conclusion section
+\section{Conclusion}
+L'application Stubborn est une solution e-commerce complète pour la vente de sweat-shirts, avec une interface utilisateur moderne, un back-office fonctionnel, et une gestion sécurisée des utilisateurs. Les futures évolutions pourraient inclure l'ajout de filtres avancés dans la boutique, la gestion des commandes, ou l'intégration de promotions. Pour toute question, contactez Antoine Papin à antoine.papin.dev@gmail.com.
+
+% Ending the document
+\end{document}
