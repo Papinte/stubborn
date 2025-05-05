@@ -2,50 +2,57 @@
 
 {% block title %}Paiement - Stubborn{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('payment') }}
+{% endblock %}
+
 {% block body %}
-    <h1>Paiement (Mode Test)</h1>
+    <div class="payment-page">
+        <h1>Paiement</h1>
 
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success">{{ message }}</div>
-    {% endfor %}
-    {% for message in app.flashes('error') %}
-        <div class="alert alert-danger">{{ message }}</div>
-    {% endfor %}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
 
-    <h2>Récapitulatif de votre commande</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Sweat-shirt</th>
-                <th>Taille</th>
-                <th>Prix</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in cart %}
+        <h2>Récapitulatif de votre commande</h2>
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.size }}</td>
-                    <td>{{ item.price }} €</td>
+                    <th>Sweat-shirt</th>
+                    <th>Taille</th>
+                    <th>Prix</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for item in cart %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.size }}</td>
+                        <td>{{ item.price }} €</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-    <p><strong>Prix total : {{ totalPrice }} €</strong></p>
+        <p class="total-price"><strong>Prix total : {{ totalPrice }} €</strong></p>
 
-    <h3>Formulaire de paiement (Mode Test)</h3>
-    <p>Utilisez la carte de test Stripe : 4242 4242 4242 4242, une date future (par exemple, 12/25), et un CVC quelconque (par exemple, 123).</p>
+        <h3>Formulaire de paiement (Mode Test)</h3>
+        <p>Utilisez la carte de test Stripe : 4242 4242 4242 4242, une date future (par exemple, 12/25), et un CVC quelconque (par exemple, 123).</p>
 
-    <form id="payment-form">
-        <div id="card-element" class="form-group">
-            <!-- Stripe Elements will create a card input here -->
-        </div>
-        <div id="card-errors" role="alert" class="text-danger"></div>
-        <button id="submit-payment" class="btn btn-success" data-turbo="false">Payer {{ totalPrice }} €</button>
-    </form>
+        <form id="payment-form">
+            <div id="card-element">
+                <!-- Stripe Elements will create a card input here -->
+            </div>
+            <div id="card-errors" role="alert" class="text-danger"></div>
+            <button id="submit-payment" class="btn btn-success" data-turbo="false">Payer {{ totalPrice }} €</button>
+        </form>
 
-    <p><a href="{{ path('app_cart') }}">Retour au panier</a></p>
+        <p><a href="{{ path('app_cart') }}" class="back-to-cart">Retour au panier</a></p>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
