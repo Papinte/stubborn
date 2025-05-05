@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -33,10 +34,18 @@ class RegistrationFormType extends AbstractType
                     new Email(['message' => 'Veuillez entrer un email valide.']),
                 ],
             ])
-            ->add('plainPassword', PasswordType::class, [
-                'label' => 'Mot de passe',
+            ->add('plainPassword', RepeatedType::class, [
+                'type' => PasswordType::class,
+                'invalid_message' => 'Les mots de passe doivent correspondre.',
+                'first_options' => [
+                    'label' => 'Mot de passe',
+                    'attr' => ['autocomplete' => 'new-password'],
+                ],
+                'second_options' => [
+                    'label' => 'Confirmer le mot de passe',
+                    'attr' => ['autocomplete' => 'new-password'],
+                ],
                 'mapped' => false,
-                'attr' => ['autocomplete' => 'new-password'],
                 'constraints' => [
                     new NotBlank(['message' => 'Veuillez entrer un mot de passe.']),
                     new Length([
@@ -49,13 +58,6 @@ class RegistrationFormType extends AbstractType
             ->add('delivery_address', TextType::class, [
                 'label' => 'Adresse de livraison',
                 'required' => false,
-            ])
-            ->add('agreeTerms', CheckboxType::class, [
-                'label' => "J'accepte les conditions d'utilisation",
-                'mapped' => false,
-                'constraints' => [
-                    new IsTrue(['message' => "Vous devez accepter les conditions d'utilisation."]),
-                ],
             ])
         ;
     }

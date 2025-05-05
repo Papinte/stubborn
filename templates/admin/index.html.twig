@@ -1,74 +1,94 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Back-office - Stubborn{% endblock %}
+{% block title %}Back-office{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('admin') }}
+{% endblock %}
 
 {% block body %}
-    <h1>Back-office</h1>
+    <div class="admin-page">
+        <h1>Back-office</h1>
 
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success">{{ message }}</div>
-    {% endfor %}
-    {% for message in app.flashes('error') %}
-        <div class="alert alert-danger">{{ message }}</div>
-    {% endfor %}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
 
-    <h2>Liste des sweat-shirts</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nom</th>
-                <th>Prix</th>
-                <th>Mis en avant</th>
-                <th>Image</th>
-                <th>Stocks (XS/S/M/L/XL)</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for sweatshirt in sweatshirts %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Nom</th>
+                    <th>Prix</th>
+                    <th>Stocks (XS/S/M/L/XL)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
                 <tr>
                     <td>
-                        {{ form_start(forms[sweatshirt.id], {'attr': {'data-turbo': 'false'}}) }}
-                        <input type="hidden" name="sweatshirt_id" value="{{ sweatshirt.id }}">
-                        {{ form_widget(forms[sweatshirt.id].name) }}
+                        {{ form_start(new_form, {'attr': {'data-turbo': 'false'}}) }}
+                        {{ form_widget(new_form.image, {'attr': {'class': 'form-control'}}) }}
                     </td>
                     <td>
-                        {{ form_widget(forms[sweatshirt.id].price) }}
+                        {{ form_widget(new_form.name, {'attr': {'class': 'form-control'}}) }}
                     </td>
                     <td>
-                        {{ form_widget(forms[sweatshirt.id].isFeatured) }}
+                        {{ form_widget(new_form.price, {'attr': {'class': 'form-control'}}) }}
                     </td>
-                    <td>
-                        {% if sweatshirt.image %}
-                            <img src="{{ asset('images/' ~ sweatshirt.image) }}" alt="{{ sweatshirt.name }}" style="max-width: 100px;" onerror="this.style.display='none'">
-                        {% endif %}
-                        {{ form_widget(forms[sweatshirt.id].image) }}
-                    </td>
-                    <td>
-                        {% for stock in sweatshirt.stocks %}
-                            <div class="form-group">
-                                <label>{{ stock.size }}</label>
-                                <input type="number" name="sweatshirt_inline[stocks][{{ stock.size }}]" value="{{ stock.quantity }}" class="form-control" min="0">
+                    <td class="stocks-row">
+                        {% for size in ['XS', 'S', 'M', 'L', 'XL'] %}
+                            <div class="stock-field">
+                                <label>{{ size }}</label>
+                                <input type="number" name="sweatshirt_new[stocks][{{ size }}]" value="0" class="form-control" min="0">
                             </div>
                         {% endfor %}
                     </td>
                     <td>
-                        {{ form_widget(forms[sweatshirt.id].save) }}
-                        {{ form_end(forms[sweatshirt.id]) }}
-
-                        <form method="post" action="{{ path('app_admin_delete', {'id': sweatshirt.id}) }}" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce sweat-shirt ?');" data-turbo="false">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ sweatshirt.id) }}">
-                            <button class="btn btn-danger btn-sm">Supprimer</button>
-                        </form>
+                        <button type="submit" class="btn">Ajouter</button>
+                        {{ form_end(new_form) }}
                     </td>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                {% for sweatshirt in sweatshirts %}
+                    <tr>
+                        <td>
+                            {% if sweatshirt.image %}
+                                <img src="{{ asset('images/' ~ sweatshirt.image) }}" alt="{{ sweatshirt.name }}" style="max-width: 100px;" onerror="this.style.display='none'">
+                            {% endif %}
+                            {{ form_widget(forms[sweatshirt.id].image) }}
+                        </td>
+                        <td>
+                            {{ form_start(forms[sweatshirt.id], {'attr': {'data-turbo': 'false'}}) }}
+                            <input type="hidden" name="sweatshirt_id" value="{{ sweatshirt.id }}">
+                            {{ form_widget(forms[sweatshirt.id].name) }}
+                        </td>
+                        <td>
+                            {{ form_widget(forms[sweatshirt.id].price) }}
+                        </td>
+                        <td class="stocks-row">
+                            {% for stock in sweatshirt.stocks %}
+                                <div class="stock-field">
+                                    <label>{{ stock.size }}</label>
+                                    <input type="number" name="sweatshirt_inline[stocks][{{ stock.size }}]" value="{{ stock.quantity }}" class="form-control" min="0">
+                                </div>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {{ form_widget(forms[sweatshirt.id].save, {'attr': {'class': 'btn'}}) }}
+                            {{ form_end(forms[sweatshirt.id]) }}
 
-    <h2>Ajouter un sweat-shirt</h2>
-    {{ form_start(new_form, {'attr': {'data-turbo': 'false'}}) }}
-        {{ form_widget(new_form) }}
-        <button type="submit" class="btn btn-primary">Ajouter</button>
-    {{ form_end(new_form) }}
+                            <form method="post" action="{{ path('app_admin_delete', {'id': sweatshirt.id}) }}" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce sweat-shirt ?');" data-turbo="false">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ sweatshirt.id) }}">
+                                <button class="btn">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

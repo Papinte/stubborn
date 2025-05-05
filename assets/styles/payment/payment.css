@@ -1,0 +1,79 @@
+.payment-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.payment-page h1, .payment-page h2, .payment-page h3 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.payment-page .table {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.payment-page .table th {
+    background-color: #f8f9fa;
+    color: #333;
+    font-weight: 600;
+}
+
+.payment-page .table td {
+    vertical-align: middle;
+    padding: 15px;
+}
+
+.payment-page .total-price {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #28a745;
+    margin: 20px 0;
+}
+
+.payment-page #payment-form {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.payment-page #card-element {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 10px;
+    background-color: #fff;
+    margin-bottom: 15px;
+}
+
+.payment-page #card-errors {
+    margin-bottom: 15px;
+    font-size: 0.9em;
+}
+
+.payment-page #submit-payment {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1em;
+    border-radius: 4px;
+}
+
+.payment-page .back-to-cart {
+    display: inline-block;
+    margin-top: 20px;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.payment-page .back-to-cart:hover {
+    text-decoration: underline;
+}
+
+.payment-page .alert {
+    margin-bottom: 20px;
+    border-radius: 4px;
+}

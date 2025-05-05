@@ -2,46 +2,46 @@
 
 {% block title %}Panier - Stubborn{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('cart') }}
+{% endblock %}
+
 {% block body %}
-    <h1>Panier</h1>
+    <div class="cart-page">
+        <h1>Panier</h1>
 
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success">{{ message }}</div>
-    {% endfor %}
-    {% for message in app.flashes('error') %}
-        <div class="alert alert-danger">{{ message }}</div>
-    {% endfor %}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
 
-    {% if cart is empty %}
-        <p>Votre panier est vide pour l'instant.</p>
-    {% else %}
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Sweat-shirt</th>
-                    <th>Taille</th>
-                    <th>Prix</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
+        {% if cart is empty %}
+            <p>Votre panier est vide pour l'instant.</p>
+        {% else %}
+            <div class="cart-items">
                 {% for index, item in cart %}
-                    <tr>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.size }}</td>
-                        <td>{{ item.price }} €</td>
-                        <td>
-                            <a href="{{ path('app_cart_remove', {'index': index}) }}" class="btn btn-danger btn-sm">Retirer</a>
-                        </td>
-                    </tr>
+                    <div class="cart-item">
+                        <div class="cart-item-image">
+                            <img src="{{ asset('images/' ~ item.name|lower ~ '.jpeg') }}" alt="{{ item.name }}" width="200" />
+                        </div>
+                        <div class="cart-item-details">
+                            <p class="cart-item-name">{{ item.name }}</p>
+                            <p class="cart-item-price">{{ item.price }} €</p>
+                            <p class="cart-item-size">{{ item.size }}</p>
+                            <a href="{{ path('app_cart_remove', {'index': index}) }}" class="btn-remove">Retirer du panier</a>
+                        </div>
+                    </div>
                 {% endfor %}
-            </tbody>
-        </table>
+            </div>
 
-        <p><strong>Prix total : {{ totalPrice }} €</strong></p>
-
-        <a href="{{ path('app_cart_payment') }}" class="btn btn-primary" data-turbo="false">Finaliser ma commande</a>
-    {% endif %}
-
-    <p><a href="{{ path('app_products') }}">Continuer mes achats</a></p>
+            <div class="cart-summary">
+                <p class="cart-total">Total : {{ totalPrice }} €</p>
+                <a href="{{ path('app_cart_payment') }}" class="btn-finalize">Finaliser ma commande</a>
+                <a href="{{ path('app_products') }}" class="btn-continue">Continuer mes achats</a>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

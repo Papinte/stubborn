@@ -2,31 +2,39 @@
 
 {% block title %}Produits - Stubborn{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('products') }}
+{% endblock %}
+
 {% block body %}
-    <h1>Produits</h1>
-
-    <a href="{{ path('app_home') }}">Retour à l'accueil</a>
-
-    {# Boutons de filtrage par fourchette de prix #}
-    <div>
-        <h3>Filtrer par prix :</h3>
-        <a href="{{ path('app_products') }}" {% if selectedRange is null %}style="font-weight: bold;"{% endif %}>Tous</a>
-        {% for range in priceRanges %}
-            <a href="{{ path('app_products', {'range': range}) }}" {% if selectedRange == range %}style="font-weight: bold;"{% endif %}>{{ range }} €</a>
-        {% endfor %}
+<section class="products-page">
+    <div class="price-filter">
+        <h2>Fourchette de prix</h2>
+        <ul>
+            <li>
+                <a href="{{ path('app_products') }}" {% if selectedRange is null %}style="font-weight: bold;"{% endif %}>Tous</a>
+                {% for range in priceRanges %}
+            </li>
+            <li>
+                <a href="{{ path('app_products', {'range': range}) }}" {% if selectedRange == range %}style="font-weight: bold;"{% endif %}>{{ range }} €</a>
+            </li>
+                {% endfor %}
+        </ul>
     </div>
-
-    <section>
-        <h2>Nos sweat-shirts</h2>
-        {% for sweatshirt in sweatshirts %}
-            <div>
-                <h3>{{ sweatshirt.name }}</h3>
-                <p>Prix : {{ sweatshirt.price }} €</p>
-                <img src="{{ asset('images/' ~ sweatshirt.image) }}" alt="{{ sweatshirt.name }}" width="200">
-                <a href="{{ path('app_product', {'id': sweatshirt.id}) }}">Voir</a>
-            </div>
-        {% else %}
-            <p>Aucun sweat-shirt disponible.</p>
-        {% endfor %}
-    </section>
+        <div class="product-sweat">
+            {% for sweatshirt in sweatshirts %}
+                <div class="sweat">
+                    <img src="{{ asset('images/' ~ sweatshirt.image) }}" alt="{{ sweatshirt.name }}" width="200" />
+                    <h3>{{ sweatshirt.name }}</h3>
+                    <div class="price-button">
+                        <p>Prix : {{ sweatshirt.price }} €</p>
+                        {% if app.user %}
+                            <a href="{{ path('app_product', {'id': sweatshirt.id}) }}" class="button">Voir</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+    </div>
+</section>
 {% endblock %}

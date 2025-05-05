@@ -1,0 +1,53 @@
+header{
+    background-color: #f8f9fa;
+}
+img{
+    max-width: 150px;
+}
+.en-tete{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.menu{
+    display: flex;
+    gap: 20px;
+}
+.menu a {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+}
+
+.menu a.active {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.info {
+    background-color: #f8f9fa;
+    padding: 20px 0;
+    text-align: center;
+    border-top: 1px solid #ddd;
+    margin-top: 40px;
+}
+
+.info h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.info p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.info a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.info a:hover {
+    text-decoration: underline;
+}

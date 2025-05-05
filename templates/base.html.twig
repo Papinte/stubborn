@@ -6,7 +6,7 @@
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
         {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
+            {{ encore_entry_link_tags('home') }}
         {% endblock %}
 
         {% block javascripts %}
@@ -15,7 +15,27 @@
         {% endblock %}
     </head>
     <body>
-        <main>
+        {% block header %}
+            <header>
+                <div class="en-tete container">
+                <div>
+                    <img src="{{ asset('images/header/Logo.png') }}" alt="logo de la marque" />
+                    <p>Don't compromise on your look</p>
+                    </div>
+                    <nav class="menu">
+                        <a href="{{ path('app_home') }}" class="{% if app.request.get('_route') == 'app_home' %}active{% endif %}">Accueil</a>
+                        {% if app.user %}
+                            <a href="{{ path('app_products') }}" class="{% if app.request.get('_route') == 'app_products' %}active{% endif %}">Boutique</a>
+                            <a href="{{ path('app_cart') }}" class="{% if app.request.get('_route') == 'app_cart' %}active{% endif %}">Panier</a>
+                            <a href="{{ path('app_logout') }}">Se déconnecter</a>
+                        {% else %}
+                            <a href="{{ path('app_register') }}" class="{% if app.request.get('_route') == 'app_register' %}active{% endif %}">S'inscrire</a>
+                            <a href="{{ path('app_login') }}" class="{% if app.request.get('_route') == 'app_login' %}active{% endif %}">Se connecter</a>
+                        {% endif %}
+                    </nav>
+                </div>
+            </header>
+        {% endblock %}
         {% for type, messages in app.flashes %}
             {% for message in messages %}
                 <div class="alert alert-{{ type }}" role="alert">
@@ -25,14 +45,12 @@
         {% endfor %}
 
         {% block body %}{% endblock %}
-        </main>
         <footer>
-            <section>
-                <h2>À propos de Stubborn</h2>
-                <p><strong>Nom :</strong> Stubborn</p>
-                <p><strong>Adresse :</strong> Piccadilly Circus, London W1J 0DA, Royaume-Uni</p>
-                <p><strong>Contact :</strong> stubborn@blabla.com</p>
-                <p><strong>Slogan :</strong> Don't compromise on your look</p>
+            <section class="info">
+                <h2>Stubborn</h2>
+                <p>Piccadilly Circus, London W1J 0DA, Royaume-Uni</p>
+                <p>stubborn@blabla.com</p>
+                <p>Don't compromise on your look</p>
             </section>
         </footer>
     </body>
