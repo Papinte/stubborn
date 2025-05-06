@@ -107,7 +107,7 @@ L'application est construite sur une architecture MVC avec Symfony 7.2, utilisan
 \subsection{Technologies utilisées}
 \begin{itemize}
     \item \textbf{Backend} : Symfony 7.2 (PHP 8.2+), Doctrine ORM pour la gestion des entités.
-    \item \textbf{Frontend} : Twig pour les templates, Bootstrap pour les styles, Webpack Encore pour la gestion des assets.
+    \item \textbf{Frontend} : Twig pour les templates, Bootstrap pour les styles, Webpack Encore pour la gestion des assets JavaScript et CSS.
     \item \textbf{Paiement} : API Stripe pour le traitement des paiements.
     \item \textbf{Base de données} : MySQL/PostgreSQL (configurable via Doctrine).
     \item \textbf{Sécurité} : Symfony Security pour l'authentification, gestion des rôles, et vérification CSRF.
@@ -187,17 +187,17 @@ Les composants de sécurité assurent l'authentification et la vérification des
     \item \texttt{/logout} : Déconnexion utilisateur (\texttt{app\_logout}).
     \item \texttt{/register} : Inscription utilisateur (\texttt{app\_register}).
     \item \texttt{/verify/email} : Vérification de l'e-mail (\texttt{app\_verify\_email}).
-\end{itemize]
+\end{itemize}
 
 % Installation instructions section
 \section{Instructions d'installation}
-Pour installer et exécuter l'application localement, suivez ces étapes :
+Pour installer et exécuter l'application localement, suivez ces étapes dans l’ordre. Les assets JavaScript et CSS doivent être compilés avant de démarrer le serveur.
 
 \subsection{Prérequis}
 \begin{itemize}
     \item PHP 8.2 ou supérieur
     \item Composer
-    \item Node.js et Yarn/NPM
+    \item Node.js (version 14.x ou supérieure) et npm
     \item MySQL/PostgreSQL
     \item Clé API Stripe (publique et secrète)
 \end{itemize}
@@ -206,16 +206,20 @@ Pour installer et exécuter l'application localement, suivez ces étapes :
 \begin{enumerate}
     \item Cloner le dépôt : \texttt{git clone <url-du-depot>}
     \item Installer les dépendances PHP : \texttt{composer install}
-    \item Installer les dépendances JavaScript : \texttt{yarn install} ou \texttt{npm install}
+    \item Installer les dépendances JavaScript : \texttt{npm install}
+    \item Compiler les assets avec Webpack Encore : \texttt{npm run dev}
     \item Configurer la base de données dans \texttt{.env} : \\
           \texttt{DATABASE\_URL="mysql://user:password@127.0.0.1:3306/stubborn"}
     \item Créer la base de données : \texttt{php bin/console doctrine:database:create}
     \item Exécuter les migrations : \texttt{php bin/console doctrine:migrations:migrate}
-    \item Compiler les assets : \texttt{yarn encore dev}
     \item Configurer les clés Stripe dans \texttt{.env} : \\
           \texttt{STRIPE\_PUBLIC\_KEY=pk\_test\_...} \\
           \texttt{STRIPE\_SECRET\_KEY=sk\_test\_...}
-    \item Lancer le serveur : \texttt{symfony server:start} ou, sur Windows, exécuter le script \texttt{.\textbackslash run-tests-and-start.bat} pour lancer les tests et démarrer l'application.
+    \item Lancer le serveur :
+    \begin{itemize}
+        \item Sur Windows, exécuter le script : \texttt{.\textbackslash run-tests-and-start.bat} (après avoir compilé les assets avec \texttt{npm run dev}).
+        \item Sur d’autres systèmes : \texttt{symfony server:start}
+    \end{itemize}
 \end{enumerate}
 
 \subsection{Accès}
@@ -223,6 +227,12 @@ Pour installer et exécuter l'application localement, suivez ces étapes :
     \item Boutique : \texttt{http://localhost:8000/products}
     \item Back-office : \texttt{http://localhost:8000/admin}
     \item Connexion/Inscription : \texttt{http://localhost:8000/login}, \texttt{http://localhost:8000/register}
+\end{itemize}
+
+\subsection{Notes}
+\begin{itemize}
+    \item Assurez-vous que Node.js et npm sont installés (\texttt{node --version}, \texttt{npm --version}).
+    \item Si une erreur \texttt{"Could not find the entrypoints file from Webpack"} apparaît, exécutez \texttt{npm install} et \texttt{npm run dev} pour générer \texttt{public/build/entrypoints.json} avant de lancer le serveur.
 \end{itemize}
 
 % Conclusion section
