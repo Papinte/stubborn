@@ -4,44 +4,58 @@ Prérequis
 
 PHP 8.2 ou supérieur
 Composer
+
 Node.js (version 14.x ou supérieure) et npm
+
 MySQL ou PostgreSQL
 Clé API Stripe (publique et secrète)
 
 Installation
 Pour lancer l’application, suivez ces étapes dans l’ordre. Les assets JavaScript et CSS doivent être compilés avant de démarrer le serveur.
 
-Clonez le dépôt :git clone <url-de-ton-depot>
+Clonez le dépôt :
+git clone [<url-de-ton-depot>](https://github.com/Papinte/stubborn)
 cd stubborn
 
 
-Installez les dépendances PHP :composer install
+Installez les dépendances PHP :
+composer install
 
 
-Installez les dépendances JavaScript (nécessaire pour Webpack Encore) :npm install
+Installez les dépendances JavaScript :
+npm install
 
 
-Compilez les assets avec Webpack Encore (crée {public/build/entrypoints.json}) :npm run dev
+Compilez les assets avec Webpack Encore :
+npm run dev
 
 
-Configurez la base de données dans {.env} :DATABASE_URL="mysql://root:@127.0.0.1:3306/stubborn?serverVersion=10.4.32-MariaDB&charset=utf8mb4""
+Configurez la base de données dans \texttt{.env} :
+DATABASE_URL="mysql://root:@127.0.0.1:3306/stubborn?serverVersion=10.4.32-MariaDB&charset=utf8mb4"
 
 
-Créez la base de données :php bin/console doctrine:database:create
+Créez la base de données :
+php bin/console doctrine:database:create
 
 
-Exécutez les migrations :php bin/console doctrine:migrations:migrate
+Exécutez les migrations :
+php bin/console doctrine:migrations:migrate
 
 
-Configurez les clés Stripe dans {.env} :STRIPE_PUBLIC_KEY=pk_test_...
+Configurez les clés Stripe dans {.env} :
+STRIPE_PUBLIC_KEY=pk_test_...
 STRIPE_SECRET_KEY=sk_test_...
 
 
 Lancez l’application :
-Sur Windows, exécutez :.\run-tests-and-start.bat
+
+Sur Windows, exécutez :
+.\run-tests-and-start.bat
 
 Ce script effectue des tâches supplémentaires (comme exécuter des tests) et démarre le serveur. Assurez-vous d’avoir exécuté \texttt{npm run dev} au préalable.
-Sur d’autres systèmes :symfony server:start
+
+Sur d’autres systèmes :
+symfony server:start
 
 
 
@@ -53,10 +67,6 @@ Boutique : http://localhost:8000/products
 Back-office : http://localhost:8000/admin
 Connexion/Inscription : http://localhost:8000/login, http://localhost:8000/register
 
-Résolution des erreurs
-
-Si vous obtenez l’erreur \texttt{"Could not find the entrypoints file from Webpack"}, exécutez \texttt{npm install} et \texttt{npm run dev} pour générer \texttt{public/build/entrypoints.json} avant de lancer le serveur.
-Vérifiez que Node.js et npm sont installés (\texttt{node --version}, \texttt{npm --version}).
 
 Documentation
 Consultez le fichier \texttt{docs/documentation.pdf} pour une description complète de l'application, incluant les fonctionnalités, l'architecture technique, et les instructions d'installation.

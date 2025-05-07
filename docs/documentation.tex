@@ -107,7 +107,7 @@ L'application est construite sur une architecture MVC avec Symfony 7.2, utilisan
 \subsection{Technologies utilisées}
 \begin{itemize}
     \item \textbf{Backend} : Symfony 7.2 (PHP 8.2+), Doctrine ORM pour la gestion des entités.
-    \item \textbf{Frontend} : Twig pour les templates, Bootstrap pour les styles, Webpack Encore pour la gestion des assets JavaScript et CSS.
+    \item \textbf{Frontend} : Twig pour les templates, Bootstrap pour les styles, Webpack Encore pour la gestion des assets JavaScript et CSS, Symfony UX Turbo pour une navigation dynamique sans rechargement complet des pages.
     \item \textbf{Paiement} : API Stripe pour le traitement des paiements.
     \item \textbf{Base de données} : MySQL/PostgreSQL (configurable via Doctrine).
     \item \textbf{Sécurité} : Symfony Security pour l'authentification, gestion des rôles, et vérification CSRF.
@@ -204,12 +204,12 @@ Pour installer et exécuter l'application localement, suivez ces étapes dans l�
 
 \subsection{Étapes d'installation}
 \begin{enumerate}
-    \item Cloner le dépôt : \texttt{git clone <url-du-depot>}
+    \item Cloner le dépôt : \texttt{git clone https://github.com/Papinte/stubborn}
     \item Installer les dépendances PHP : \texttt{composer install}
-    \item Installer les dépendances JavaScript : \texttt{npm install}
-    \item Compiler les assets avec Webpack Encore : \texttt{npm run dev}
+    \item Installer les dépendances JavaScript (inclut \texttt{@symfony/stimulus-bridge} et \texttt{@symfony/ux-turbo}) : \texttt{npm install}
+    \item Compiler les assets avec Webpack Encore pour générer \texttt{public/build/entrypoints.json} : \texttt{npm run dev}
     \item Configurer la base de données dans \texttt{.env} : \\
-          \texttt{DATABASE\_URL="mysql://user:password@127.0.0.1:3306/stubborn"}
+          \texttt{DATABASE\_URL="mysql://root:@127.0.0.1:3306/stubborn?serverVersion=10.4.32-MariaDB&charset=utf8mb4"}
     \item Créer la base de données : \texttt{php bin/console doctrine:database:create}
     \item Exécuter les migrations : \texttt{php bin/console doctrine:migrations:migrate}
     \item Configurer les clés Stripe dans \texttt{.env} : \\
@@ -229,15 +229,10 @@ Pour installer et exécuter l'application localement, suivez ces étapes dans l�
     \item Connexion/Inscription : \texttt{http://localhost:8000/login}, \texttt{http://localhost:8000/register}
 \end{itemize}
 
-\subsection{Notes}
-\begin{itemize}
-    \item Assurez-vous que Node.js et npm sont installés (\texttt{node --version}, \texttt{npm --version}).
-    \item Si une erreur \texttt{"Could not find the entrypoints file from Webpack"} apparaît, exécutez \texttt{npm install} et \texttt{npm run dev} pour générer \texttt{public/build/entrypoints.json} avant de lancer le serveur.
-\end{itemize}
 
 % Conclusion section
 \section{Conclusion}
-L'application Stubborn est une solution e-commerce complète pour la vente de sweat-shirts, avec une interface utilisateur moderne, un back-office fonctionnel, et une gestion sécurisée des utilisateurs. Les futures évolutions pourraient inclure l'ajout de filtres avancés dans la boutique, la gestion des commandes, ou l'intégration de promotions. Pour toute question, contactez Antoine Papin à antoine.papin.dev@gmail.com.
+L'application Stubborn est une solution e-commerce complète pour la vente de sweat-shirts, avec une interface utilisateur moderne, un back-office fonctionnel, et une gestion sécurisée des utilisateurs. Grâce à Symfony UX Turbo, la navigation est fluide et rapide. Les futures évolutions pourraient inclure l’ajout de filtres avancés dans la boutique, la gestion des commandes, ou l’intégration de promotions. Pour toute question, contactez Antoine Papin à antoine.papin.dev@gmail.com.
 
 % Ending the document
 \end{document}
